@@ -1,0 +1,91 @@
+.alignRow {
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.alignBox {
+    width: 140px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    border: 1px solid #121219;
+    border-radius: 5px;
+    height: 50px;
+}
+
+.submitButton {
+    background-color: #2599FF;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+    height: 50px;
+    width: 300px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Poppins';
+    cursor: pointer;
+}
+
+.inputShaded {
+    background-color: #303544;
+    padding-left: 24px;
+    height: 50px;
+    width: 300px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Poppins';
+    margin-bottom: 15px;
+}
+
+.inputUnshaded {
+    background-color: transparent;
+    padding-left: 24px;
+    padding-right: 24px;
+    height: 50px;
+    width: 100%;
+    font-size: 18px;
+    border: 1px solid #121219;
+    border-radius: 5px;
+    font-family: 'Poppins';
+    margin-bottom: 15px;
+}
+
+.colorLabel {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #121219;
+    cursor: pointer;
+}
+
+.colorInputText {
+    background-color: transparent;
+    font-size: 16px;
+    color: #fff;
+    width: 75px;
+    border: none;
+    outline: none;
+}
+
+
+.options {
+    background-color: #121219;
+    color: #fff;
+}
+
+.alignDiv {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

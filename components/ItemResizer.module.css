@@ -16,7 +16,7 @@
 }
 
 .item {
-    border: 1px dashed black;
+    border: 1px solid #0097df;
   position: absolute;
   top: 0px;
   left: 0px;
@@ -33,13 +33,35 @@
   /* overflow: hidden; */
 }
 
+
+.unselectedItem {
+    border: 1px solid transparent;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100px;
+  height: 100px;
+  z-index: 100;
+  touch-action: none;
+  cursor: move;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* user-select: none; */
+  /* overflow: hidden; */
+}
+
+
+
 .resizer {
     position: absolute;
     bottom: -4px;
     right: -4px;
     width: 10px;
     height: 10px;
-    background-color: #0097df;
+    background-color: #fff;
+    border: 1px solid #0097df;
     cursor: nwse-resize;
     touch-action: none;
   }

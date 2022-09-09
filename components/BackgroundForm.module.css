@@ -1,0 +1,98 @@
+.clickButtonShaded {
+    width: 100%;
+    height: 50px;   
+    background-color: #303544;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Poppins';
+    font-size: 18px;
+    gap:5px;
+    padding-left: 24px;
+}
+.clickButtonUnshaded {
+    width: 100%;
+    height: 50px;   
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid #121219;
+    border-radius: 5px;
+    font-family: 'Poppins';
+    font-size: 18px;
+    gap:15px;
+    padding-left: 24px;
+}
+
+.buttonLabel {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap:15px
+}
+
+.bgLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.submitButton {
+    background-color: #2599FF;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+    height: 50px;
+    width: 300px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Poppins';
+}
+
+.alignDiv {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.colorLabel {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #121219;
+    cursor: pointer;
+}
+
+.colorInputText {
+    background-color: transparent;
+    font-size: 16px;
+    color: #fff;
+    width: 75px;
+    border: none;
+    outline: none;
+}
+
+.alignBox {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid #121219;
+    border-radius: 5px;
+    height: 50px;
+    padding-left: 24px;
+    gap: 15px;
+}

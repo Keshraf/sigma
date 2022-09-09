@@ -1,30 +1,38 @@
 import { useDrag } from "@use-gesture/react";
 import { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { animated, useSpring } from "react-spring";
+import { updateElement } from "../store/elementSlice";
+import { setSelectedElement } from "../store/selectedElementSlice";
 import styles from "./ItemResizer.module.css";
 
-const ItemResizer = ({ containerHeight, containerWidth, children }) => {
-  console.log(containerHeight, containerWidth, children);
+const ItemResizer = ({ info, children }) => {
+  const dispatch = useDispatch();
+  const selectedId = useSelector((state) => state.selectedElement.id);
+  let selected = false;
+  if (selectedId === info.id) {
+    selected = true;
+  }
+
   const dragElRef = useRef(null);
-  const dragElRef2 = useRef(null);
-  const dragElRef3 = useRef(null);
-  const dragElRef4 = useRef(null);
-  const childrenElRef = useRef(children);
   const [{ x, y, width, height }, api] = useSpring(() => ({
-    x: 0,
-    y: 0,
-    width: 100,
-    height: 100,
+    x: info ? info.x : 0,
+    y: info ? info.y : 0,
+    width: info ? info.width : 100,
+    height: info ? info.height : 100,
   }));
 
   const bind = useDrag(
     (state) => {
-      const Resizing =
-        state.event.target === dragElRef.current ||
-        state.event.target === dragElRef2.current ||
-        state.event.target === dragElRef3.current ||
-        state.event.target === dragElRef4.current;
-      //console.log(childrenElRef.current.getBoundingClientRect());
+      dispatch(
+        setSelectedElement({
+          id: info.id,
+          ...info,
+        })
+      );
+
+      const Resizing = state.event.target === dragElRef.current;
+
       if (Resizing) {
         api.set({
           width: state.offset[0],
@@ -35,15 +43,20 @@ const ItemResizer = ({ containerHeight, containerWidth, children }) => {
           x: state.offset[0],
           y: state.offset[1],
         });
+        dispatch(
+          updateElement({
+            id: info.id,
+            width: width.get(),
+            height: height.get(),
+            x: x.get(),
+            y: y.get(),
+          })
+        );
       }
     },
     {
       from: (event) => {
-        const isResizing =
-          event.target === dragElRef.current ||
-          event.target === dragElRef2.current ||
-          event.target === dragElRef3.current ||
-          event.target === dragElRef4.current;
+        const isResizing = event.target === dragElRef.current;
         if (isResizing) {
           return [width.get(), height.get()];
         } else {
@@ -51,41 +64,91 @@ const ItemResizer = ({ containerHeight, containerWidth, children }) => {
         }
       },
       bounds: (state) => {
-        const isResizing =
-          state?.event.target === dragElRef.current ||
-          state?.event.target === dragElRef2.current ||
-          state?.event.target === dragElRef3.current ||
-          state?.event.target === dragElRef4.current;
+        const isResizing = state?.event.target === dragElRef.current;
         if (isResizing) {
           return {
             top: 50,
             left: 50,
-            right: 700,
-            bottom: 500,
+            right: 960 - x.get(),
+            bottom: 540 - y.get(),
           };
         } else {
           return {
             top: 0,
             left: 0,
-            right: 700,
-            bottom: 500,
+            right: 960 - width.get(),
+            bottom: 540 - height.get(),
           };
         }
       },
     }
   );
 
+  let element;
+  if (info?.type === "text") {
+    let flex = "center";
+    if (info.align === "left") {
+      flex = "flex-start";
+    } else if (info.align === "right") {
+      flex = "flex-end";
+    }
+
+    element = (
+      <p
+        style={{
+          fontSize: `${info.size}px`,
+          fontFamily: info.font,
+          fontWeight: `${info.weight}`,
+          width: "100%",
+          height: "100%",
+          textAlign: info.align,
+          color: info.color,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: flex,
+          alignItems: "center",
+        }}
+      >
+        {info.content}
+      </p>
+    );
+  } else if (info?.type === "image") {
+    element = (
+      <img
+        src={info.src}
+        alt="img"
+        style={{
+          width: "100%",
+          height: "auto",
+          touchAction: "none",
+          userSelect: "none",
+          overflow: "hidden",
+        }}
+        draggable={false}
+      />
+    );
+  }
+
   return (
     <animated.div
-      className={styles.item}
+      className={selected ? styles.item : styles.unselectedItem}
       style={{ x, y, width, height }}
+      onClick={(e) =>
+        dispatch(
+          setSelectedElement({
+            id: info.id,
+            ...info,
+          })
+        )
+      }
       {...bind()}
     >
-      {children}
-      <div className={styles.resizer} ref={dragElRef} />
-      <div className={styles.resizer2} ref={dragElRef2} />
-      <div className={styles.resizer3} ref={dragElRef3} />
-      <div className={styles.resizer4} ref={dragElRef4} />
+      {info ? element : children}
+      <div
+        className={styles.resizer}
+        ref={dragElRef}
+        style={{ display: `${selected ? "block" : "none"}` }}
+      />
     </animated.div>
   );
 };
