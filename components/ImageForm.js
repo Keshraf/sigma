@@ -3,12 +3,52 @@ import { FiUploadCloud } from "react-icons/fi";
 import { CgUnsplash } from "react-icons/cg";
 import { RiUnsplashFill } from "react-icons/ri";
 import { SiIcons8 } from "react-icons/si";
+import { storage } from "../firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { nanoid } from "nanoid";
+import { addElement } from "../store/elementSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 const ImageForm = ({ setUnsplashOpen }) => {
+  const dispatch = useDispatch();
+
   const uploadHandler = (e) => {
-    const image = document.getElementById("output");
-    image.src = URL.createObjectURL(e.target.files[0]);
+    const file = e.target.files[0];
+    console.log(file);
+    const imageRef = ref(storage, `images/image_${nanoid()}.jpg`);
+
+    const uploadingImage = uploadBytes(imageRef, file).then((snapshot) => {
+      console.log(snapshot, "Snapshot");
+      const loadingImage = getDownloadURL(imageRef).then((url) => {
+        const data = {
+          page: 1,
+          src: url,
+          width: 200,
+          height: 100,
+          x: 15,
+          y: 15,
+          type: "image",
+          id: nanoid(),
+        };
+        dispatch(addElement(data));
+      });
+
+      toast.promise(loadingImage, {
+        loading: "Loading Image",
+        success: "Image Loaded",
+        error: "Error when Loading",
+      });
+    });
+
+    toast.promise(uploadingImage, {
+      loading: "Uploading Image",
+      success: "Image Uploaded",
+      error: "Error when Uploading",
+    });
   };
+
   return (
     <div className={styles.bgLayout}>
       <div className={styles.clickButtonShaded}>

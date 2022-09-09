@@ -3,8 +3,14 @@ import { FiUploadCloud } from "react-icons/fi";
 import { RiUnsplashFill } from "react-icons/ri";
 import styles from "./BackgroundForm.module.css";
 import { toast } from "react-hot-toast";
-import { addBackgroundColor } from "../store/backgroundSlice";
+import {
+  addBackgroundColor,
+  addBackgroundFirebase,
+} from "../store/backgroundSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { storage } from "../firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { nanoid } from "nanoid";
 
 const BackgroundForm = ({ setUnsplashOpen }) => {
   const dispatch = useDispatch();
@@ -19,8 +25,29 @@ const BackgroundForm = ({ setUnsplashOpen }) => {
   );
 
   const uploadHandler = (e) => {
-    const image = document.getElementById("output");
-    image.src = URL.createObjectURL(e.target.files[0]);
+    const file = e.target.files[0];
+    const imageRef = ref(storage, `background/background.jpg`);
+
+    const uploadingImage = uploadBytes(imageRef, file).then((snapshot) => {
+      const loadingImage = getDownloadURL(imageRef).then((url) => {
+        const data = {
+          src: url,
+        };
+        dispatch(addBackgroundFirebase(data));
+      });
+
+      toast.promise(loadingImage, {
+        loading: "Loading Image",
+        success: "Image Loaded",
+        error: "Error when Loading",
+      });
+    });
+
+    toast.promise(uploadingImage, {
+      loading: "Uploading Image",
+      success: "Image Uploaded",
+      error: "Error when Uploading",
+    });
   };
 
   const colorBlurHandler = (e) => {
@@ -45,6 +72,7 @@ const BackgroundForm = ({ setUnsplashOpen }) => {
     };
 
     dispatch(addBackgroundColor(data));
+    toast.success("Background Color Updated!");
   };
 
   return (

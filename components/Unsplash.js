@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { nanoid } from "nanoid";
 import { addElement } from "../store/elementSlice";
 import { addBackgroundUnsplash } from "../store/backgroundSlice";
+import toast from "react-hot-toast";
 
 const Unsplash = ({ setUnsplashOpen, type }) => {
   const [photos, setPhotos] = useState([]);
@@ -58,6 +59,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
         page: 1,
       };
       dispatch(addElement(data));
+      toast.success("Image Added!");
     } else if (type === "background") {
       const src = e.target.alt;
 
@@ -65,6 +67,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
         src,
       };
       dispatch(addBackgroundUnsplash(data));
+      toast.success("Background Image Updated!");
     }
 
     setUnsplashOpen(false);

@@ -14,6 +14,8 @@ const ItemResizer = ({ info, children }) => {
     selected = true;
   }
 
+  const imgRef = useRef(null);
+
   const dragElRef = useRef(null);
   const [{ x, y, width, height }, api] = useSpring(() => ({
     x: info ? info.x : 0,
@@ -22,14 +24,44 @@ const ItemResizer = ({ info, children }) => {
     height: info ? info.height : 100,
   }));
 
+  const imageLoadHandler = (e) => {
+    const naturalHeight = e.target.naturalHeight;
+    const naturalWidth = e.target.naturalWidth;
+
+    if (naturalHeight > 500) {
+      naturalWidth = naturalWidth * (500 / naturalHeight);
+      naturalHeight = 500;
+    }
+    if (naturalWidth > 800) {
+      naturalHeight = naturalHeight * (800 / naturalWidth);
+      naturalWidth = 800;
+    }
+
+    const newData = {
+      id: info.id,
+      width: naturalWidth,
+      height: naturalHeight,
+      x: x.get(),
+      y: y.get(),
+    };
+    console.log(newData);
+    dispatch(updateElement(newData));
+    api.set({
+      width: naturalWidth,
+      height: naturalHeight,
+    });
+  };
+
   const bind = useDrag(
     (state) => {
-      dispatch(
-        setSelectedElement({
-          id: info.id,
-          ...info,
-        })
-      );
+      if (selectedId !== info.id) {
+        dispatch(
+          setSelectedElement({
+            id: info.id,
+            ...info,
+          })
+        );
+      }
 
       const Resizing = state.event.target === dragElRef.current;
 
@@ -125,6 +157,8 @@ const ItemResizer = ({ info, children }) => {
           overflow: "hidden",
         }}
         draggable={false}
+        onLoad={imageLoadHandler}
+        ref={imgRef}
       />
     );
   }

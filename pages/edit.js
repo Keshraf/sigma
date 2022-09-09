@@ -8,31 +8,52 @@ import TextForm from "../components/TextForm";
 import BackgroundForm from "../components/BackgroundForm";
 import ImageForm from "../components/ImageForm";
 import ShapesForm from "../components/ShapesForm";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Unsplash from "../components/Unsplash";
+import { useDispatch, useSelector } from "react-redux";
+import { resetSelected } from "../store/selectedElementSlice";
 
-const Edit = ({ fonts }) => {
-  const [activeNav, setActiveNav] = useState(<TextForm fonts={fonts} />);
+const Edit = () => {
+  const selectedElement = useSelector((state) => state.selectedElement);
+  const dispatch = useDispatch();
+  const [activeNav, setActiveNav] = useState(<TextForm />);
   const [activeButton, setActiveButton] = useState("textNav");
   const [unsplashOpen, setUnsplashOpen] = useState(false);
 
-  const navChangeHandler = (element, id) => {
-    setActiveNav(element);
-    const button = document.getElementById(id);
-    const prevButton = document.getElementById(activeButton);
-    prevButton.classList.remove(`${styles.navButtonActive}`);
-    button.classList.add(`${styles.navButtonActive}`);
-    setActiveButton(id);
-  };
+  const navChangeHandler = useCallback(
+    (element, id) => {
+      setActiveNav(element);
+      const button = document.getElementById(id);
+      const prevButton = document.getElementById(activeButton);
+      prevButton.classList.remove(`${styles.navButtonActive}`);
+      button.classList.add(`${styles.navButtonActive}`);
+      setActiveButton(id);
+    },
+    [activeButton]
+  );
+
+  useEffect(() => {
+    console.log("run useffect!");
+    if (selectedElement.id === "") {
+      return;
+    } else if (selectedElement.type === "text") {
+      navChangeHandler(<TextForm />, "textNav");
+    } else if (selectedElement.type === "image") {
+      navChangeHandler(
+        <ImageForm setUnsplashOpen={setUnsplashOpen} />,
+        "imageNav"
+      );
+    }
+  }, [selectedElement, navChangeHandler]);
 
   return (
     <>
       <Toaster
         position="top-center"
         toastOptions={{
-          duration: 1500,
+          duration: 2000,
           style: {
             background: "#303544",
             color: "#ffffff",
@@ -57,9 +78,10 @@ const Edit = ({ fonts }) => {
           ></input>
           <button
             className={`${styles.navButton} ${styles.navButtonActive}`}
-            onClick={() =>
-              navChangeHandler(<TextForm fonts={fonts} />, "textNav")
-            }
+            onClick={() => {
+              dispatch(resetSelected());
+              navChangeHandler(<TextForm />, "textNav");
+            }}
             id="textNav"
           >
             <TbTextResize style={{ fontSize: "24px" }} />
@@ -67,12 +89,13 @@ const Edit = ({ fonts }) => {
           </button>
           <button
             className={`${styles.navButton}`}
-            onClick={() =>
+            onClick={() => {
+              dispatch(resetSelected());
               navChangeHandler(
                 <BackgroundForm setUnsplashOpen={setUnsplashOpen} />,
                 "backgroundNav"
-              )
-            }
+              );
+            }}
             id="backgroundNav"
           >
             <TbSquaresFilled style={{ fontSize: "24px" }} />
@@ -80,12 +103,13 @@ const Edit = ({ fonts }) => {
           </button>
           <button
             className={`${styles.navButton}`}
-            onClick={() =>
+            onClick={() => {
+              dispatch(resetSelected());
               navChangeHandler(
                 <ImageForm setUnsplashOpen={setUnsplashOpen} />,
                 "imageNav"
-              )
-            }
+              );
+            }}
             id="imageNav"
           >
             <IoMdImage style={{ fontSize: "24px" }} />
@@ -93,7 +117,10 @@ const Edit = ({ fonts }) => {
           </button>
           <button
             className={`${styles.navButton}`}
-            onClick={() => navChangeHandler(<ShapesForm />, "shapeNav")}
+            onClick={() => {
+              dispatch(resetSelected());
+              navChangeHandler(<ShapesForm />, "shapeNav");
+            }}
             id="shapeNav"
           >
             <FaShapes style={{ fontSize: "24px" }} />

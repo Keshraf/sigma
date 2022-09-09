@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { removeElement } from "../store/elementSlice";
 import { resetSelected } from "../store/selectedElementSlice";
+import Image from "next/image";
 
 function useKey(key, cb) {
   const callbackRef = useRef(cb);

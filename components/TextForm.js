@@ -69,6 +69,7 @@ const TextForm = () => {
         align,
       };
       dispatch(updateTextElement(data));
+      toast.success("Text Updated!");
     } else {
       const data = {
         id: nanoid(),
@@ -87,6 +88,7 @@ const TextForm = () => {
       };
 
       dispatch(addElement(data));
+      toast.success("Text Added!");
     }
 
     setContent("");
