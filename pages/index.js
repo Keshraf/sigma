@@ -1,8 +1,17 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
+  const generateRoom = (e) => {
+    e.preventDefault();
+    console.log(e.target[0].value);
+  };
+
+  const joinRoom = (e) => {
+    e.preventDefault();
+    console.log(e.target[0].value);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -11,6 +20,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>Sigma - Figma for Slides</h1>
+      <form onSubmit={generateRoom} className={styles.form}>
+        <label htmlFor="username">Username</label>
+        <input type="text" id="username"></input>
+        <button type="submit">Generate Room</button>
+      </form>
+      <form onSubmit={joinRoom} className={styles.form}>
+        <label htmlFor="room">Room Id</label>
+        <input type="text" id="room"></input>
+        <button type="submit">Join Room</button>
+      </form>
     </div>
   );
 }

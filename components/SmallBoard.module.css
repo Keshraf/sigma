@@ -1,0 +1,13 @@
+.board {
+    width: 192px;
+    height: 108px;
+    
+    min-width: 192px;
+    min-height: 108px;
+    
+    background-repeat: no-repeat;
+    background-size:cover;
+    border-radius: 5px;
+    border: 1px solid #FFFFFF;
+    cursor: pointer;
+}

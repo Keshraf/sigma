@@ -4,7 +4,7 @@ import styles from "./Unsplash.module.css";
 import { AiOutlineEnter } from "react-icons/ai";
 import { RiUnsplashFill } from "react-icons/ri";
 import { MdClose } from "react-icons/md";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "nanoid";
 import { addElement } from "../store/elementSlice";
 import { addBackgroundUnsplash } from "../store/backgroundSlice";
@@ -14,6 +14,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
   const [photos, setPhotos] = useState([]);
   const [query, setQuery] = useState("wallpaper");
   const dispatch = useDispatch();
+  const page = useSelector((state) => state.page.current);
   useEffect(() => {
     const unsplash = createApi({
       accessKey: "hADNzo74JDzJ8wK5fZjtzVGQVSaCzjCKFokw9TTQLQ4",
@@ -56,7 +57,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
         y: 0,
         width: e.target.naturalWidth,
         height: e.target.naturalHeight,
-        page: 1,
+        page,
       };
       dispatch(addElement(data));
       toast.success("Image Added!");
@@ -65,6 +66,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
 
       const data = {
         src,
+        page,
       };
       dispatch(addBackgroundUnsplash(data));
       toast.success("Background Image Updated!");

@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { removeElement } from "../store/elementSlice";
 import { resetSelected } from "../store/selectedElementSlice";
+import { FiZap } from "react-icons/fi";
 import Image from "next/image";
+import { setCurrentPage } from "../store/pageSlice";
 
 function useKey(key, cb) {
   const callbackRef = useRef(cb);
@@ -25,18 +27,25 @@ function useKey(key, cb) {
   }, [key]);
 }
 
-const Board = () => {
+const Board = ({ page }) => {
   const selected = useSelector((state) => state.selectedElement.id);
   const background = useSelector((state) => state.background);
   const board = useRef();
   const dispatch = useDispatch();
 
   const elements = useSelector((state) => state.elements);
+  const pageElements = elements.filter((element) => element.page === page);
+  const pageBackground = background.filter((element) => element.page === page);
 
   const selectHandler = (e) => {
     if (e.target !== board.current) {
       return;
     }
+    dispatch(
+      setCurrentPage({
+        current: page,
+      })
+    );
     dispatch(resetSelected());
   };
 
@@ -58,17 +67,17 @@ const Board = () => {
     <div
       className={styles.board}
       style={{
-        backgroundImage: `url(${background?.background})`,
+        backgroundImage: `url(${pageBackground[0]?.background})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
-        backgroundColor: `${background?.background}`,
+        backgroundColor: `${pageBackground[0]?.background}`,
       }}
       onClick={selectHandler}
       onKeyDown={detectKeyDown}
       ref={board}
     >
-      {elements.map((element) => {
-        return <ItemResizer info={element} key={element.id} />;
+      {pageElements.map((element) => {
+        return <ItemResizer info={element} key={element.id} disable={false} />;
       })}
     </div>
   );

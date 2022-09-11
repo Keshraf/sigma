@@ -14,13 +14,19 @@ import axios from "axios";
 import Unsplash from "../components/Unsplash";
 import { useDispatch, useSelector } from "react-redux";
 import { resetSelected } from "../store/selectedElementSlice";
+import Icons from "../components/Icons";
+import { addPage } from "../store/pageSlice";
+import SmallBoard from "../components/SmallBoard";
 
 const Edit = () => {
   const selectedElement = useSelector((state) => state.selectedElement);
+  const page = useSelector((state) => state.page);
+  console.log(page);
   const dispatch = useDispatch();
   const [activeNav, setActiveNav] = useState(<TextForm />);
   const [activeButton, setActiveButton] = useState("textNav");
   const [unsplashOpen, setUnsplashOpen] = useState(false);
+  const [iconsOpen, setIconsOpen] = useState(false);
 
   const navChangeHandler = useCallback(
     (element, id) => {
@@ -40,9 +46,17 @@ const Edit = () => {
       return;
     } else if (selectedElement.type === "text") {
       navChangeHandler(<TextForm />, "textNav");
-    } else if (selectedElement.type === "image") {
+    } else if (selectedElement.type === "shape") {
+      navChangeHandler(<ShapesForm />, "shapeNav");
+    } else if (
+      selectedElement.type === "image" ||
+      selectedElement.type === "icon"
+    ) {
       navChangeHandler(
-        <ImageForm setUnsplashOpen={setUnsplashOpen} />,
+        <ImageForm
+          setUnsplashOpen={setUnsplashOpen}
+          setIconsOpen={setIconsOpen}
+        />,
         "imageNav"
       );
     }
@@ -70,6 +84,7 @@ const Edit = () => {
         ) : (
           <></>
         )}
+        {iconsOpen ? <Icons setIconsOpen={setIconsOpen} /> : <></>}
         <nav className={styles.nav}>
           <input
             type="text"
@@ -106,7 +121,10 @@ const Edit = () => {
             onClick={() => {
               dispatch(resetSelected());
               navChangeHandler(
-                <ImageForm setUnsplashOpen={setUnsplashOpen} />,
+                <ImageForm
+                  setUnsplashOpen={setUnsplashOpen}
+                  setIconsOpen={setIconsOpen}
+                />,
                 "imageNav"
               );
             }}
@@ -132,18 +150,27 @@ const Edit = () => {
         <section className={styles.workspace}>
           <div className={styles.alignSpace}>
             <div className={styles.action}>
-              <button className={styles.actionButton}>
-                <AiOutlineUserAdd style={{ fontSize: "24px" }} />
-                Invite
-              </button>
-              <button className={styles.actionButton}>
-                <AiOutlinePlus style={{ fontSize: "24px" }} />
-                Add Page
-              </button>
+              <p className={styles.page}>#{page.current}</p>
+              <div className={styles.actionButtons}>
+                <button className={styles.actionButton}>
+                  <AiOutlineUserAdd style={{ fontSize: "24px" }} />
+                  Invite
+                </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => dispatch(addPage())}
+                >
+                  <AiOutlinePlus style={{ fontSize: "24px" }} />
+                  Add Page
+                </button>
+              </div>
             </div>
-            <Board />
-            {/* <img id="output" width="200" alt="testImg" /> */}{" "}
-            {/* Insert IMG Later */}
+            <Board page={page.current} />
+            <div className={styles.pages}>
+              {page.pages.map((page) => {
+                return <SmallBoard key={page} page={page} />;
+              })}
+            </div>
           </div>
         </section>
       </div>

@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 const TextForm = () => {
   const selected = useSelector((state) => state.selectedElement);
-
+  const page = useSelector((state) => state.page.current);
   const [content, setContent] = useState("");
   const [color, setColor] = useState("#FFFFFF");
   const [size, setSize] = useState(16);
@@ -84,14 +84,13 @@ const TextForm = () => {
         width: 100,
         height: 100,
         type: "text",
-        page: 1,
+        page,
       };
 
       dispatch(addElement(data));
       toast.success("Text Added!");
+      setContent("");
     }
-
-    setContent("");
   };
 
   return (

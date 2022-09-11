@@ -5,8 +5,9 @@ import { animated, useSpring } from "react-spring";
 import { updateElement } from "../store/elementSlice";
 import { setSelectedElement } from "../store/selectedElementSlice";
 import styles from "./ItemResizer.module.css";
+import * as FeatherIcons from "react-icons/fi";
 
-const ItemResizer = ({ info, children }) => {
+const ItemResizer = ({ info, disable, children }) => {
   const dispatch = useDispatch();
   const selectedId = useSelector((state) => state.selectedElement.id);
   let selected = false;
@@ -15,6 +16,7 @@ const ItemResizer = ({ info, children }) => {
   }
 
   const imgRef = useRef(null);
+  const textRef = useRef(null);
 
   const dragElRef = useRef(null);
   const [{ x, y, width, height }, api] = useSpring(() => ({
@@ -54,6 +56,9 @@ const ItemResizer = ({ info, children }) => {
 
   const bind = useDrag(
     (state) => {
+      if (disable) {
+        return;
+      }
       if (selectedId !== info.id) {
         dispatch(
           setSelectedElement({
@@ -140,6 +145,7 @@ const ItemResizer = ({ info, children }) => {
           justifyContent: flex,
           alignItems: "center",
         }}
+        ref={textRef}
       >
         {info.content}
       </p>
@@ -161,27 +167,77 @@ const ItemResizer = ({ info, children }) => {
         ref={imgRef}
       />
     );
+  } else if (info?.type === "icon") {
+    const icon = FeatherIcons[info.name];
+    element = (
+      <div
+        style={{
+          color: info.color,
+          fontSize: `${info.size}px`,
+        }}
+      >
+        {icon()}
+      </div>
+    );
+  } else if (info?.type === "shape") {
+    if (info.shape === "square") {
+      element = (
+        <div
+          className={styles.square}
+          style={{ backgroundColor: info.color }}
+        ></div>
+      );
+    } else if (info.shape === "circle") {
+      element = (
+        <div
+          className={styles.circle}
+          style={{ backgroundColor: info.color }}
+        ></div>
+      );
+    } else if (info.shape === "triangle") {
+      element = (
+        <div
+          className={styles.triangle}
+          style={{ backgroundColor: info.color }}
+        ></div>
+      );
+    } else if (info.shape === "line") {
+      element = (
+        <div
+          className={styles.line}
+          style={{ backgroundColor: info.color }}
+        ></div>
+      );
+    }
   }
+
+  const itemSelected = selected && !disable;
 
   return (
     <animated.div
-      className={selected ? styles.item : styles.unselectedItem}
-      style={{ x, y, width, height }}
-      onClick={(e) =>
+      className={itemSelected ? styles.item : styles.unselectedItem}
+      style={{ x, y, width, height, cursor: `${disable ? "default" : "move"}` }}
+      onClick={(e) => {
+        if (disable) {
+          console.log("dispa");
+          return;
+        }
+        console.log("set");
+
         dispatch(
           setSelectedElement({
             id: info.id,
             ...info,
           })
-        )
-      }
+        );
+      }}
       {...bind()}
     >
       {info ? element : children}
       <div
         className={styles.resizer}
         ref={dragElRef}
-        style={{ display: `${selected ? "block" : "none"}` }}
+        style={{ display: `${itemSelected ? "block" : "none"}` }}
       />
     </animated.div>
   );

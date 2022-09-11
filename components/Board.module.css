@@ -5,6 +5,44 @@
     border-radius: 10px;
     height: 540px;
     width: 960px;
-    margin-top: 100px;
-    margin-bottom: 100px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    /* transform: scale(0.5); */
+}
+
+.smallBoard {
+    position: absolute;
+    top: -191px;
+    left: -369px;
+    /* background-color: #171720; */
+    border: 1px solid #20222D;
+    border-radius: 10px;
+    height: 540px;
+    width: 960px;
+    min-width: 192px;
+    transform: scale(0.2,0.2);
+    border: 1px solid #ffffff;
+}
+
+.smallBoard:hover {
+    opacity: 0.7;
+}
+
+.disable {
+    position: relative;
+    z-index: 40000 !important;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.selectPage {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    font-size: 125px;
+    color: #FAFC6F;
+    border: 5px solid #FAFC6F;
+    padding: 15px;
+    border-radius: 100%;
 }

@@ -26,30 +26,29 @@
 .square {
     width: 50px;
     height: 50px;
-    background-color: #171720;
+    border-color: #303544;
 }
 
 .circle {
     height: 50px;
   width: 50px;
-  background-color: #171720;
+  background-color: #303544;
   border-radius: 50%;
 }
 
 .line {
     height: 2px;
     width: 75px;
-  background-color: #171720;
+  background-color: #303544;
   transform: rotate(45deg);
 
 }
 
 .triangle {
-    width: 0;
-	height: 0;
-	border-left: 25px solid transparent;
-	border-right: 25px solid transparent;
-	border-bottom: 50px solid #171720;
+    background-color: #303544;
+	clip-path: polygon(50% 0, 100% 100%, 0 100%);
+	width: 50px;
+	height: 50px;
 }
 
 .submitButton {
@@ -90,4 +89,34 @@
     justify-content: center;
     align-items: center;
     gap:15px;
+}
+
+.alignBox {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid #121219;
+    border-radius: 5px;
+    height: 50px;
+    padding-left: 24px;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.colorLabel {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #121219;
+    cursor: pointer;
+}
+
+.colorInputText {
+    background-color: transparent;
+    font-size: 16px;
+    color: #fff;
+    width: 75px;
+    border: none;
+    outline: none;
 }

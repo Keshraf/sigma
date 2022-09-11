@@ -7,13 +7,13 @@ import { storage } from "../firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { nanoid } from "nanoid";
 import { addElement } from "../store/elementSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 
-const ImageForm = ({ setUnsplashOpen }) => {
+const ImageForm = ({ setUnsplashOpen, setIconsOpen }) => {
   const dispatch = useDispatch();
-
+  const page = useSelector((state) => state.page.current);
   const uploadHandler = (e) => {
     const file = e.target.files[0];
     console.log(file);
@@ -23,7 +23,7 @@ const ImageForm = ({ setUnsplashOpen }) => {
       console.log(snapshot, "Snapshot");
       const loadingImage = getDownloadURL(imageRef).then((url) => {
         const data = {
-          page: 1,
+          page,
           src: url,
           width: 200,
           height: 100,
@@ -76,7 +76,11 @@ const ImageForm = ({ setUnsplashOpen }) => {
         <RiUnsplashFill style={{ fontSize: "24px" }} />
         Launch Unsplash
       </div>
-      <div className={styles.clickButtonUnshaded} style={{ cursor: "pointer" }}>
+      <div
+        className={styles.clickButtonUnshaded}
+        style={{ cursor: "pointer" }}
+        onClick={(e) => setIconsOpen(true)}
+      >
         <SiIcons8 style={{ fontSize: "24px" }} />
         Launch Iconify
       </div>

@@ -15,6 +15,7 @@ import { nanoid } from "nanoid";
 const BackgroundForm = ({ setUnsplashOpen }) => {
   const dispatch = useDispatch();
   const background = useSelector((state) => state.background);
+  const page = useSelector((state) => state.page.current);
   let bgColor = false;
   if (background.source === "color") {
     bgColor = true;
@@ -31,6 +32,7 @@ const BackgroundForm = ({ setUnsplashOpen }) => {
     const uploadingImage = uploadBytes(imageRef, file).then((snapshot) => {
       const loadingImage = getDownloadURL(imageRef).then((url) => {
         const data = {
+          page,
           src: url,
         };
         dispatch(addBackgroundFirebase(data));
@@ -68,6 +70,7 @@ const BackgroundForm = ({ setUnsplashOpen }) => {
   const submitHandler = () => {
     console.log("Submitted!");
     const data = {
+      page,
       color,
     };
 
