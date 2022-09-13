@@ -177,20 +177,3 @@ const Edit = () => {
     </>
   );
 };
-
-export async function getStaticProps() {
-  const response = await axios({
-    url: `https://www.googleapis.com/webfonts/v1/webfonts?sort=POPULARITY&key=${process.env.FONTS_API_KEY}`,
-    method: "get",
-  });
-
-  const items = response.data.items;
-
-  return {
-    props: {
-      fonts: items.slice(0, 100),
-    },
-  };
-}
-
-export default Edit;
