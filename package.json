@@ -12,6 +12,7 @@
     "@onehop/client": "^1.3.14",
     "@onehop/react": "^1.3.14",
     "@react-spring/web": "^9.5.2",
+    "@reduxjs/toolkit": "^1.8.5",
     "@stitches/react": "^1.2.8",
     "@use-gesture/react": "^10.2.19",
     "axios": "^0.27.2",
