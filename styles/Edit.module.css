@@ -157,6 +157,7 @@
     justify-content: space-between;
     gap: 20px;
     align-items: center;
+    cursor: pointer;
 }
 
 .page {
@@ -196,7 +197,11 @@
     border-radius: 10px;
     font-family: 'Poppins';
     font-size: 18px;
-    gap:5px
+    gap:5px;
+    cursor: pointer;
+}
+.actionButton:hover{
+    border: 1px solid #ffffff1e;
 }
 
 .clickButtonShaded {

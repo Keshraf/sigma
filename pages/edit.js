@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
 import { child, get, onChildChanged, ref, update } from "firebase/database";
 import { database } from "../firebaseConfig";
+import CodeModal from "../components/CodeModal";
 
 const Edit = () => {
   const selectedElement = useSelector((state) => state.selectedElement);
@@ -32,6 +33,7 @@ const Edit = () => {
   const [activeButton, setActiveButton] = useState("textNav");
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [iconsOpen, setIconsOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [roomId, setRoomId] = useState();
 
   const navChangeHandler = useCallback(
@@ -147,6 +149,7 @@ const Edit = () => {
           <></>
         )}
         {iconsOpen ? <Icons setIconsOpen={setIconsOpen} /> : <></>}
+        {modalOpen ? <CodeModal setModalOpen={setModalOpen} /> : <></>}
         <nav className={styles.nav}>
           <input
             type="text"
@@ -214,7 +217,10 @@ const Edit = () => {
             <div className={styles.action}>
               <p className={styles.page}>#{page.current}</p>
               <div className={styles.actionButtons}>
-                <button className={styles.actionButton}>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => setModalOpen(true)}
+                >
                   <AiOutlineUserAdd style={{ fontSize: "24px" }} />
                   Invite
                 </button>
