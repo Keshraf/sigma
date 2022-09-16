@@ -2,6 +2,7 @@ import { TbSquaresFilled, TbTextResize } from "react-icons/tb";
 import { IoMdImage } from "react-icons/io";
 import { AiOutlineUserAdd, AiOutlinePlus } from "react-icons/ai";
 import { FaShapes } from "react-icons/fa";
+import { FiDownload } from "react-icons/fi";
 import styles from "../styles/Edit.module.css";
 import Board from "../components/Board";
 import TextForm from "../components/TextForm";
@@ -22,6 +23,7 @@ import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
 import { child, get, onChildChanged, ref, update } from "firebase/database";
 import { database } from "../firebaseConfig";
 import CodeModal from "../components/CodeModal";
+import html2canvas from "html2canvas";
 
 const Edit = () => {
   const selectedElement = useSelector((state) => state.selectedElement);
@@ -126,6 +128,22 @@ const Edit = () => {
     });
   };
 
+  const downloadHandler = useCallback(async () => {
+    const board = document.querySelector("#board");
+    console.log(board.setAttribute());
+    const canvas = await html2canvas(board, {
+      useCORS: true,
+      allowTaint: true,
+    });
+    const dataURL = canvas.toDataURL("image/png");
+    const tmpLink = document.createElement("a");
+    tmpLink.download = "image.png";
+    tmpLink.href = dataURL;
+    document.body.appendChild(tmpLink);
+    tmpLink.click();
+    document.body.removeChild(tmpLink);
+  }, []);
+
   return (
     <>
       <Toaster
@@ -211,6 +229,11 @@ const Edit = () => {
           </button>
           <div className={styles.divider}></div>
           {activeNav}
+          <div className={styles.divider}></div>
+          <button className={styles.navButton} onClick={downloadHandler}>
+            <FiDownload style={{ fontSize: "24px" }} />
+            Download Page
+          </button>
         </nav>
         <section className={styles.workspace}>
           <div className={styles.alignSpace}>
@@ -233,7 +256,7 @@ const Edit = () => {
                 </button>
               </div>
             </div>
-            <Board page={page.current} />
+            <Board page={page.current} id="board" />
             <div className={styles.pages}>
               {page.pages.map((page) => {
                 return <SmallBoard key={page} page={page} />;

@@ -214,6 +214,7 @@ const Board = ({ page }) => {
       onClick={selectHandler}
       onKeyDown={detectKeyDown}
       ref={board}
+      id="board"
     >
       {pageElements.map((element) => {
         return (
