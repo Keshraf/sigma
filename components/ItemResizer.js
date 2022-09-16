@@ -1,15 +1,21 @@
-import { useDrag } from "@use-gesture/react";
-import { useRef } from "react";
+import { useDrag, useGesture } from "@use-gesture/react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { animated, useSpring } from "react-spring";
 import { updateElement } from "../store/elementSlice";
 import { setSelectedElement } from "../store/selectedElementSlice";
 import styles from "./ItemResizer.module.css";
 import * as FeatherIcons from "react-icons/fi";
+import { child, get, onValue, ref, update } from "firebase/database";
+import { database } from "../firebaseConfig";
+import { useEffect } from "react";
+import { useCallback } from "react";
+import { useMemo } from "react";
 
-const ItemResizer = ({ info, disable, children }) => {
+const ItemResizer = ({ info, disable, updated, children }) => {
   const dispatch = useDispatch();
   const selectedId = useSelector((state) => state.selectedElement.id);
+  const roomId = useSelector((state) => state.room.id);
   let selected = false;
   if (selectedId === info.id) {
     selected = true;
@@ -26,7 +32,48 @@ const ItemResizer = ({ info, disable, children }) => {
     height: info ? info.height : 100,
   }));
 
+  useEffect(() => {
+    if (!updated) {
+      return;
+    }
+    api.set({
+      x: info.x,
+      y: info.y,
+      height: info.height,
+      width: info.width,
+    });
+  }, [updated, api, info]);
+
+  const elementUpdate = useCallback(() => {
+    console.log("USE CALLBACK CALLED!");
+
+    const dbRef = ref(database);
+    get(child(dbRef, `elements/${roomId}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+        snapshot.forEach((childSnapshot) => {
+          const childValue = childSnapshot.val();
+          if (childValue.id === info.id) {
+            console.log(childValue);
+            update(ref(database, `elements/${roomId}/${childSnapshot.key}`), {
+              height: height.get(),
+              width: width.get(),
+              x: x.get(),
+              y: y.get(),
+            });
+          }
+        });
+      } else {
+        console.log("No data available");
+      }
+    });
+  }, [roomId, info.id, height, width, x, y]);
+
   const imageLoadHandler = (e) => {
+    if (info.loaded) {
+      return;
+    }
+    console.log("LOADED!: " + info.loaded);
     const naturalHeight = e.target.naturalHeight;
     const naturalWidth = e.target.naturalWidth;
 
@@ -52,8 +99,29 @@ const ItemResizer = ({ info, disable, children }) => {
       width: naturalWidth,
       height: naturalHeight,
     });
-  };
 
+    const dbRef = ref(database);
+    get(child(dbRef, `elements/${roomId}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+        snapshot.forEach((childSnapshot) => {
+          const childValue = childSnapshot.val();
+          if (childValue.id === info.id) {
+            console.log(childValue);
+            update(ref(database, `elements/${roomId}/${childSnapshot.key}`), {
+              height: height.get(),
+              width: width.get(),
+              x: x.get(),
+              y: y.get(),
+              loaded: true,
+            });
+          }
+        });
+      } else {
+        console.log("No data available");
+      }
+    });
+  };
   const bind = useDrag(
     (state) => {
       if (disable) {
@@ -66,6 +134,11 @@ const ItemResizer = ({ info, disable, children }) => {
             ...info,
           })
         );
+      }
+      if (!state.dragging) {
+        console.log(state.dragging);
+        elementUpdate();
+        return;
       }
 
       const Resizing = state.event.target === dragElRef.current;
@@ -218,12 +291,6 @@ const ItemResizer = ({ info, disable, children }) => {
       className={itemSelected ? styles.item : styles.unselectedItem}
       style={{ x, y, width, height, cursor: `${disable ? "default" : "move"}` }}
       onClick={(e) => {
-        if (disable) {
-          console.log("dispa");
-          return;
-        }
-        console.log("set");
-
         dispatch(
           setSelectedElement({
             id: info.id,

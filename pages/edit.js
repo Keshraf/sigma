@@ -15,18 +15,24 @@ import Unsplash from "../components/Unsplash";
 import { useDispatch, useSelector } from "react-redux";
 import { resetSelected } from "../store/selectedElementSlice";
 import Icons from "../components/Icons";
-import { addPage } from "../store/pageSlice";
+import { addPage, setPage } from "../store/pageSlice";
 import SmallBoard from "../components/SmallBoard";
+import { useRouter } from "next/router";
+import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
+import { child, get, onChildChanged, ref, update } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const Edit = () => {
   const selectedElement = useSelector((state) => state.selectedElement);
   const page = useSelector((state) => state.page);
-  console.log(page);
   const dispatch = useDispatch();
+  const room = useSelector((state) => state.room);
+  const router = useRouter();
   const [activeNav, setActiveNav] = useState(<TextForm />);
   const [activeButton, setActiveButton] = useState("textNav");
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [iconsOpen, setIconsOpen] = useState(false);
+  const [roomId, setRoomId] = useState();
 
   const navChangeHandler = useCallback(
     (element, id) => {
@@ -41,7 +47,35 @@ const Edit = () => {
   );
 
   useEffect(() => {
-    console.log("run useffect!");
+    console.log(router.query.q);
+    dispatch(
+      setRoom({
+        id: router.query.q,
+      })
+    );
+
+    const dbRef = ref(database);
+    get(child(dbRef, `rooms/${router.query.q}/pages`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log("PAGES!", snapshot.val());
+        const numberOfPages = snapshot.val();
+        dispatch(
+          setPageRoom({
+            pages: numberOfPages,
+          })
+        );
+        dispatch(
+          setPage({
+            pages: numberOfPages,
+          })
+        );
+      }
+    });
+
+    setRoomId({ id: router.query.q });
+  }, [dispatch, router.query.q]);
+
+  useEffect(() => {
     if (selectedElement.id === "") {
       return;
     } else if (selectedElement.type === "text") {
@@ -61,6 +95,34 @@ const Edit = () => {
       );
     }
   }, [selectedElement, navChangeHandler]);
+
+  // UPDATE PAGES
+  useEffect(() => {
+    const elementsRef = ref(database, `rooms/${router.query.q}`);
+    onChildChanged(elementsRef, (snapshot) => {
+      const updatedPage = snapshot.val();
+      console.log("Updated Page!: ", updatedPage);
+      /* console.log("ROom Page!: ", room.pages);
+      console.log("ROom Page!: ", page.pages.length); */
+      dispatch(
+        setPage({
+          pages: updatedPage,
+        })
+      );
+    });
+  }, [router.query.q, dispatch, room.pages, page.pages.length]);
+
+  const addPageHandler = () => {
+    console.log("ADD PAGE RAN!");
+    console.log(room);
+    const latestPages = room.pages + 1;
+    console.log("LatestPages: ", latestPages);
+    dispatch(addPageRoom());
+    dispatch(addPage());
+    update(ref(database, `rooms/${roomId.id}`), {
+      pages: latestPages,
+    });
+  };
 
   return (
     <>
@@ -158,7 +220,7 @@ const Edit = () => {
                 </button>
                 <button
                   className={styles.actionButton}
-                  onClick={() => dispatch(addPage())}
+                  onClick={addPageHandler}
                 >
                   <AiOutlinePlus style={{ fontSize: "24px" }} />
                   Add Page
