@@ -87,9 +87,9 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={() => setUnsplashOpen(false)}>
       <div className={styles.actionContainer}>
-        <div className={styles.icon} onClick={(e) => setUnsplashOpen(false)}>
+        <div className={styles.icon} onClick={() => setUnsplashOpen(false)}>
           <MdClose style={{ fontSize: "18px" }} />
           Close
         </div>
