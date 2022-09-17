@@ -1,16 +1,53 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import { database } from "../firebaseConfig";
+import { set, ref, onValue, get, child } from "firebase/database";
+import { nanoid } from "nanoid";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const [roomId, setRoomId] = useState();
+  const router = useRouter();
+
+  useEffect(() => {
+    onValue(ref(database, "rooms/"), (snapshot) => {
+      const data = snapshot.val();
+      console.log(data);
+    });
+  });
+
   const generateRoom = (e) => {
     e.preventDefault();
     console.log(e.target[0].value);
+    const room = nanoid();
+    set(ref(database, "rooms/" + room), {
+      admin: e.target[0].value,
+      pages: 1,
+    });
+
+    router.push(`/edit?q=${room}`);
   };
 
   const joinRoom = (e) => {
     e.preventDefault();
     console.log(e.target[0].value);
+    console.log(roomId);
+    get(child(ref(database), `rooms/${roomId}`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          router.push(`/edit?q=${roomId}`);
+        } else {
+          console.log("ERROR!");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
+
+  const getRooms = () => {};
 
   return (
     <div className={styles.container}>
@@ -27,9 +64,15 @@ export default function Home() {
       </form>
       <form onSubmit={joinRoom} className={styles.form}>
         <label htmlFor="room">Room Id</label>
-        <input type="text" id="room"></input>
+        <input
+          type="text"
+          id="room"
+          onChange={(e) => setRoomId(e.target.value)}
+          value={roomId}
+        ></input>
         <button type="submit">Join Room</button>
       </form>
+      <button onClick={getRooms}>Get ROoms</button>
     </div>
   );
 }

@@ -6,13 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { addElement } from "../store/elementSlice";
 import { nanoid } from "nanoid";
 import { toast } from "react-hot-toast";
+import { push, set, ref } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const Icons = ({ setIconsOpen }) => {
   const dispatch = useDispatch();
   const icons = Object.keys(FeatherIcons);
   const values = Object.values(FeatherIcons);
-  const element = FeatherIcons[icons[2]];
   const page = useSelector((state) => state.page.current);
+  const roomId = useSelector((state) => state.room.id);
 
   const addIconHandler = (e) => {
     const name = e.currentTarget.attributes.name.value;
@@ -29,17 +31,20 @@ const Icons = ({ setIconsOpen }) => {
       set: "feather",
       size: 18,
       color: "#FFFFFF",
+      roomId,
     };
     console.log(data);
     dispatch(addElement(data));
+    const elementRef = ref(database, "elements/" + roomId);
+    set(push(elementRef), data);
     setIconsOpen(false);
     toast.success("Icon Added!");
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={() => setIconsOpen(false)}>
       <div className={styles.actionContainer}>
-        <div className={styles.actionIcon} onClick={(e) => setIconsOpen(false)}>
+        <div className={styles.actionIcon} onClick={() => setIconsOpen(false)}>
           <MdClose style={{ fontSize: "18px" }} />
           Close
         </div>

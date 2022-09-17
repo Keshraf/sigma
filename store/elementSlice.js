@@ -34,7 +34,23 @@ export const elementSlice = createSlice({
   initialState,
   reducers: {
     addElement(state, action) {
-      state.push(action.payload);
+      let same = false;
+      console.log("ID", action.payload.id);
+      if (!action.payload.id) {
+        return;
+      }
+      state.forEach((el) => {
+        if (el.id === action.payload.id) {
+          console.log("SAME ID!");
+          same = true;
+        }
+      });
+      if (same) {
+        return;
+      } else {
+        console.log("still pushed!");
+        state.push(action.payload);
+      }
     },
     removeElement(state, action) {
       const newState = state.filter(
@@ -45,13 +61,24 @@ export const elementSlice = createSlice({
     updateElement(state, action) {
       const newState = state.map((element) => {
         if (element.id === action.payload.id) {
-          return {
-            ...element,
-            width: action.payload.width,
-            height: action.payload.height,
-            x: action.payload.x,
-            y: action.payload.y,
-          };
+          if (element.type === "image") {
+            return {
+              ...element,
+              width: action.payload.width,
+              height: action.payload.height,
+              x: action.payload.x,
+              y: action.payload.y,
+              loaded: true,
+            };
+          } else {
+            return {
+              ...element,
+              width: action.payload.width,
+              height: action.payload.height,
+              x: action.payload.x,
+              y: action.payload.y,
+            };
+          }
         } else {
           return element;
         }

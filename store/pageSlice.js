@@ -20,8 +20,15 @@ export const pageSlice = createSlice({
       };
       return newState;
     },
+    setPage(state, action) {
+      const value = [];
+      for (let i = 1; i <= action.payload.pages; i++) {
+        value.push(i);
+      }
+      state.pages = value;
+    },
   },
 });
 
-export const { addPage, setCurrentPage } = pageSlice.actions;
+export const { addPage, setCurrentPage, setPage } = pageSlice.actions;
 export default pageSlice.reducer;

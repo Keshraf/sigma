@@ -4,12 +4,15 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement } from "../store/elementSlice";
 import styles from "./ShapesForm.module.css";
+import { push, set, ref } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const ShapesForm = () => {
   const [shapeSelected, setShapeSelected] = useState(null);
   const [color, setColor] = useState("#FFFFFF");
   const dispatch = useDispatch();
   const page = useSelector((state) => state.page.current);
+  const roomId = useSelector((state) => state.room.id);
 
   const colorBlurHandler = (e) => {
     const value = e.target.value;
@@ -40,8 +43,11 @@ const ShapesForm = () => {
       shape: shapeSelected,
       color,
       page,
+      roomId,
     };
     dispatch(addElement(data));
+    const elementRef = ref(database, "elements/" + roomId);
+    set(push(elementRef), data);
     toast.success(`${shapeSelected} added!`);
   };
 

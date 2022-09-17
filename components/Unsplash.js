@@ -9,12 +9,15 @@ import { nanoid } from "nanoid";
 import { addElement } from "../store/elementSlice";
 import { addBackgroundUnsplash } from "../store/backgroundSlice";
 import toast from "react-hot-toast";
+import { push, set, ref } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const Unsplash = ({ setUnsplashOpen, type }) => {
   const [photos, setPhotos] = useState([]);
   const [query, setQuery] = useState("wallpaper");
   const dispatch = useDispatch();
   const page = useSelector((state) => state.page.current);
+  const roomId = useSelector((state) => state.room.id);
   useEffect(() => {
     const unsplash = createApi({
       accessKey: "hADNzo74JDzJ8wK5fZjtzVGQVSaCzjCKFokw9TTQLQ4",
@@ -58,17 +61,25 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
         width: e.target.naturalWidth,
         height: e.target.naturalHeight,
         page,
+        roomId,
       };
       dispatch(addElement(data));
+      const elementRef = ref(database, "elements/" + roomId);
+      set(push(elementRef), data);
       toast.success("Image Added!");
     } else if (type === "background") {
       const src = e.target.alt;
 
       const data = {
-        src,
+        id: nanoid(),
+        background: src,
         page,
+        roomId,
       };
       dispatch(addBackgroundUnsplash(data));
+
+      const backgroundRef = ref(database, `background/${roomId}/${page}`);
+      set(backgroundRef, data);
       toast.success("Background Image Updated!");
     }
 
@@ -76,9 +87,9 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={() => setUnsplashOpen(false)}>
       <div className={styles.actionContainer}>
-        <div className={styles.icon} onClick={(e) => setUnsplashOpen(false)}>
+        <div className={styles.icon} onClick={() => setUnsplashOpen(false)}>
           <MdClose style={{ fontSize: "18px" }} />
           Close
         </div>

@@ -5,10 +5,13 @@ import { nanoid } from "nanoid";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement, updateTextElement } from "../store/elementSlice";
 import toast from "react-hot-toast";
+import { push, set, ref } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const TextForm = () => {
   const selected = useSelector((state) => state.selectedElement);
   const page = useSelector((state) => state.page.current);
+  const roomId = useSelector((state) => state.room.id);
   const [content, setContent] = useState("");
   const [color, setColor] = useState("#FFFFFF");
   const [size, setSize] = useState(16);
@@ -85,9 +88,12 @@ const TextForm = () => {
         height: 100,
         type: "text",
         page,
+        roomId,
       };
 
       dispatch(addElement(data));
+      const elementRef = ref(database, "elements/" + roomId);
+      set(push(elementRef), data);
       toast.success("Text Added!");
       setContent("");
     }

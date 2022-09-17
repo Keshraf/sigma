@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
+import { getDatabase } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -15,9 +16,12 @@ const firebaseConfig = {
   messagingSenderId: "208208695629",
   appId: "1:208208695629:web:e245e91655dffd5ea3e704",
   measurementId: "G-ZQE4KTEQC1",
+  databaseURL:
+    "https://sigma-1662454704866-default-rtdb.asia-southeast1.firebasedatabase.app",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 /* const analytics = getAnalytics(app); */
 export const storage = getStorage(app);
+export const database = getDatabase(app);

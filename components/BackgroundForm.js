@@ -11,11 +11,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { storage } from "../firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { nanoid } from "nanoid";
+import { push, set, ref as refDatabase } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const BackgroundForm = ({ setUnsplashOpen }) => {
   const dispatch = useDispatch();
   const background = useSelector((state) => state.background);
   const page = useSelector((state) => state.page.current);
+  const roomId = useSelector((state) => state.room.id);
+
   let bgColor = false;
   if (background.source === "color") {
     bgColor = true;
@@ -27,15 +31,22 @@ const BackgroundForm = ({ setUnsplashOpen }) => {
 
   const uploadHandler = (e) => {
     const file = e.target.files[0];
-    const imageRef = ref(storage, `background/background.jpg`);
+    const imageRef = ref(storage, `background/background_${nanoid()}.jpg`);
 
     const uploadingImage = uploadBytes(imageRef, file).then((snapshot) => {
       const loadingImage = getDownloadURL(imageRef).then((url) => {
         const data = {
+          id: nanoid(),
           page,
-          src: url,
+          background: url,
+          roomId,
         };
         dispatch(addBackgroundFirebase(data));
+        const backgroundRef = refDatabase(
+          database,
+          `background/${roomId}/${page}`
+        );
+        set(backgroundRef, data);
       });
 
       toast.promise(loadingImage, {
@@ -70,11 +81,15 @@ const BackgroundForm = ({ setUnsplashOpen }) => {
   const submitHandler = () => {
     console.log("Submitted!");
     const data = {
+      id: nanoid(),
       page,
-      color,
+      background: color,
+      roomId,
     };
 
     dispatch(addBackgroundColor(data));
+    const backgroundRef = refDatabase(database, `background/${roomId}/${page}`);
+    set(backgroundRef, data);
     toast.success("Background Color Updated!");
   };
 

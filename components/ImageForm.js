@@ -10,10 +10,13 @@ import { addElement } from "../store/elementSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
+import { push, set, ref as refDatabase } from "firebase/database";
+import { database } from "../firebaseConfig";
 
 const ImageForm = ({ setUnsplashOpen, setIconsOpen }) => {
   const dispatch = useDispatch();
   const page = useSelector((state) => state.page.current);
+  const roomId = useSelector((state) => state.room.id);
   const uploadHandler = (e) => {
     const file = e.target.files[0];
     console.log(file);
@@ -31,8 +34,11 @@ const ImageForm = ({ setUnsplashOpen, setIconsOpen }) => {
           y: 15,
           type: "image",
           id: nanoid(),
+          roomId,
         };
         dispatch(addElement(data));
+        const elementRef = refDatabase(database, "elements/" + roomId);
+        set(push(elementRef), data);
       });
 
       toast.promise(loadingImage, {
