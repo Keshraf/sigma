@@ -1,34 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+    <img width="200px" src="https://github.com/Keshraf/sigma/blob/main/public/images/Sigma%20Logo%20Full.png?raw=true">
+    <p align="center">
+        <img src="https://img.shields.io/badge/version-0.0.1--alpha-c6b5ff">
+        <img src="https://img.shields.io/tokei/lines/github/Keshraf/sigma?color=ffb5f5">
+        <img src="https://img.shields.io/github/license/Keshraf/sigma?color=75ff73">
+        <img src="https://img.shields.io/github/languages/top/Keshraf/sigma?color=f7df1e">
+        <img src="https://img.shields.io/github/languages/code-size/Keshraf/sigma?color=%235e6cff&label=size">
+    </p>
+</p>
 
-## Getting Started
+# About
 
-First, run the development server:
+It is made to simplify making custom designs. It has in-built features which allow users to access beatiful designs assets from a single web application.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+# Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🚀 Launched: 
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- Smooth Drag & Drop of elements
+- Responsive Resizing of elements
+- Ability to add text, images, background, icons & shapes
+- Ability to upload images from local device
+- Access to Images from Unsplash
+- Access to Icons from Feather Icons
+- Ability to add collaborators using room code
+- Real-time Collaboration
+- Can add Multiple Pages to their design
+- Can download pages as images
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+🛠 In Progress:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- Synchronised Element Updates (like color, etc.)
+- Deleting Pages
+- Adding Patterns
 
-## Learn More
+✨ Upcoming
 
-To learn more about Next.js, take a look at the following resources:
+- Add Shadows
+- Add Borders
+- Add Gradients
+- Add More Icons
+- Authentication
+- Google Maps Integration to add Static Maps to your design
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- NextJS
+- Firebase
+- Redux Toolkit
+- use-gesture
+- React Spring
 
-## Deploy on Vercel
+# License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+MIT
