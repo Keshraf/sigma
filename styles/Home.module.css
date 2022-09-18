@@ -1,11 +1,226 @@
 .container {
-  padding: 0 2rem;
+  padding: 50px 200px 100px 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height:auto;
 }
 
 .form {
   display: flex;
   flex-direction: column;
+}
+
+.nav{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Hustle Bright';
+  color: #fff;
+  font-size: 24px;
+  width: 300px;
+  height: 50px;
+  font-stretch: 10%;
+}
+
+.github {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 160px;
+  height: 40px;
+  background: #303544;
+  border: 1px solid #20222D;
+  border-radius: 7px;
+  font-family: 'Poppins';
+  font-weight: 600;
+  color: #C1C2C7;
+  cursor: pointer;
+}
+
+.github:hover{
+  background-color: #262a39;
+}
+
+.update{
   width: 200px;
-  margin: auto;
-  margin-bottom: 50px;
+  height: 30px;
+  border: 1px solid #2A2E3B;
+  border-radius: 30px;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 15px;
+  text-align: center;
+  color: #DED128;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 75px;
+}
+
+.heading {
+  width: 1000px;
+  height: auto;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-size: 72px;
+  line-height: 87px;
+  text-align: center;
+  color: #FFFFFF;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.heading::selection{
+  color: #20222D;
+  background-color: #1DAACC;
+}
+.heading span::selection{
+  color: #20222D;
+  background-color: #1DAACC;
+}
+
+.heading span {
+  background: linear-gradient(173.64deg, rgba(0, 0, 0, 0.61) 1.75%, rgba(48, 53, 68, 0.61) 77.02%), linear-gradient(88.2deg, #1DAACC 14.79%, #20222D 54.91%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.caption{
+  width: 700px;
+  height: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 34px;
+  text-align: center;
+  color: #303544;
+  margin-top: 10px;
+  margin-bottom: 60px;
+}
+
+.caption::selection{
+  color: #20222D;
+  background-color: #1DAACC;
+}
+
+.input{
+  width: 300px;
+  height: 50px;
+  border: 1px solid #374860;
+  border-radius: 5px;
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-size: 18px;
+  text-align: center;
+  color: #303544;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: transparent;
+  margin-bottom: 15px;
+}
+
+.input::placeholder{
+  color: #303544;
+}
+
+.submit{
+  width: 300px;
+height: 50px;
+background: #1DAACC;
+border-radius: 5px;
+font-family: 'Poppins';
+font-weight: 500;
+font-size: 18px;
+text-align: center;
+color: #FFFFFF;
+border: none;
+user-select: none;
+cursor: pointer;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+gap: 10px;
+}
+
+.switchForm{
+  font-family: 'Poppins';
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+
+
+color: #303544;
+cursor: pointer;
+user-select: none;
+}
+
+.switchForm:hover{
+  text-decoration: underline; 
+}
+
+.preview{
+  position: relative;
+  margin-top: 100px;
+  margin-bottom: 150px;
+}
+
+.previewBlur{
+  position: absolute;
+width: 892px;
+height: 617px;
+
+background: linear-gradient(272.79deg, rgba(0, 0, 0, 0.61) 3.54%, rgba(48, 53, 68, 0.61) 81.55%), linear-gradient(153.79deg, #1DAACC 0.41%, #20222D 50.2%);
+filter: blur(45px);
+}
+
+.line{
+  width: 100%;
+  height: 1px;
+  color: #20222D;
+  background-color: #20222D;
+  border: #20222D;
+}
+
+.footer{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.signature{
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 34px;
+  text-align: center;
+  color: #303544;
+}
+
+.signature:hover{
+  text-decoration: underline;
 }
