@@ -3,7 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement } from "../store/elementSlice";
-import styles from "./ShapesForm.module.css";
+import styles from "../styles/ShapesForm.module.css";
 import { push, set, ref } from "firebase/database";
 import { database } from "../firebaseConfig";
 

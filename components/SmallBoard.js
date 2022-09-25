@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentPage } from "../store/pageSlice";
-import styles from "./SmallBoard.module.css";
+import styles from "../styles/SmallBoard.module.css";
 
 const SmallBoard = ({ page }) => {
   const dispatch = useDispatch();

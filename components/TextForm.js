@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TbAlignLeft, TbAlignRight, TbAlignCenter } from "react-icons/tb";
-import styles from "./TextForm.module.css";
+import styles from "../styles/TextForm.module.css";
 import { nanoid } from "nanoid";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement, updateTextElement } from "../store/elementSlice";

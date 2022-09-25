@@ -1,4 +1,4 @@
-import styles from "./Icons.module.css";
+import styles from "../styles/Icons.module.css";
 import * as FeatherIcons from "react-icons/fi";
 import { FaReact } from "react-icons/fa";
 import { MdClose } from "react-icons/md";

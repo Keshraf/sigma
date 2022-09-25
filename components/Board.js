@@ -1,5 +1,5 @@
 import ItemResizer from "./ItemResizer";
-import styles from "./Board.module.css";
+import styles from "../styles/Board.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import {

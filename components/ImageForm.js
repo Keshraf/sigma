@@ -1,4 +1,4 @@
-import styles from "./ImageForm.module.css";
+import styles from "../styles/ImageForm.module.css";
 import { FiUploadCloud } from "react-icons/fi";
 import { CgUnsplash } from "react-icons/cg";
 import { RiUnsplashFill } from "react-icons/ri";

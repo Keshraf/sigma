@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { RiUnsplashFill } from "react-icons/ri";
-import styles from "./BackgroundForm.module.css";
+import styles from "../styles/BackgroundForm.module.css";
 import { toast } from "react-hot-toast";
 import {
   addBackgroundColor,

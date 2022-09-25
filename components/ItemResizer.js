@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { animated, useSpring } from "react-spring";
 import { updateElement } from "../store/elementSlice";
 import { setSelectedElement } from "../store/selectedElementSlice";
-import styles from "./ItemResizer.module.css";
+import styles from "../styles/ItemResizer.module.css";
 import * as FeatherIcons from "react-icons/fi";
 import { child, get, onValue, ref, update } from "firebase/database";
 import { database } from "../firebaseConfig";

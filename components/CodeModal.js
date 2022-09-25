@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { FiCopy } from "react-icons/fi";
-import styles from "./CodeModal.module.css";
+import styles from "../styles/CodeModal.module.css";
 
 const CodeModal = ({ setModalOpen }) => {
   const router = useRouter();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createApi } from "unsplash-js";
-import styles from "./Unsplash.module.css";
+import styles from "../styles/Unsplash.module.css";
 import { AiOutlineEnter } from "react-icons/ai";
 import { RiUnsplashFill } from "react-icons/ri";
 import { MdClose } from "react-icons/md";
