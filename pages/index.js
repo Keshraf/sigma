@@ -3,9 +3,9 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { database } from "../firebaseConfig";
-import { set, ref, onValue, get, child } from "firebase/database";
+import { set, ref, get, child } from "firebase/database";
 import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 
@@ -62,11 +62,12 @@ export default function Home() {
             width="50px"
             height="50px"
             alt="logo"
+            className={styles.logoIcon}
           />
-          <h3>sigma</h3>
+          <h3 className={styles.name}>sigma</h3>
         </div>
         <a href="https://github.com/Keshraf/sigma" target="blank">
-          <button className={styles.github}>
+          <button className={`${styles.github} ${styles.star}`}>
             <FaGithub style={{ fontSize: "20px", color: "#C1C2C7" }} />
             <p>Star on GitHub</p>
           </button>
@@ -113,6 +114,12 @@ export default function Home() {
       >
         {activeForm ? "or, join a room" : "or, create a room"}
       </p>
+      <a href="https://github.com/Keshraf/sigma" target="blank">
+        <button className={`${styles.submit} ${styles.star2}`}>
+          <FaGithub style={{ fontSize: "20px", color: "#FFFFFF" }} />
+          <p>Star on GitHub</p>
+        </button>
+      </a>
       <div className={styles.preview}>
         <div className={styles.previewBlur}></div>
         <Image
@@ -122,7 +129,6 @@ export default function Home() {
           height="590px"
         />
       </div>
-      {/* <hr className={styles.line} /> */}
       <footer className={styles.footer}>
         <a
           href="https://github.com/Keshraf"
@@ -132,7 +138,10 @@ export default function Home() {
           Made by Ketan Saraf (Keshraf)
         </a>
         <a>
-          <button type="button" className={styles.github}>
+          <button
+            type="button"
+            className={`${styles.github} ${styles.feature}`}
+          >
             View Feature List
             <FiExternalLink />
           </button>
