@@ -1,42 +1,54 @@
+// Styles
+import styles from "../styles/Edit.module.css";
+
+// Icons
 import { TbSquaresFilled, TbTextResize } from "react-icons/tb";
 import { IoMdImage } from "react-icons/io";
 import { AiOutlineUserAdd, AiOutlinePlus } from "react-icons/ai";
 import { FaShapes } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
-import styles from "../styles/Edit.module.css";
+
+// React, Next & Redux
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { resetSelected } from "../store/selectedElementSlice";
+import { addPage, setPage } from "../store/pageSlice";
+import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
+
+// Firebase
+import { child, get, onChildChanged, ref, update } from "firebase/database";
+import { database } from "../firebaseConfig";
+
+// Other Libraries
+import { Toaster } from "react-hot-toast";
+import html2canvas from "html2canvas";
+
+//Components
 import Board from "../components/Board";
 import TextForm from "../components/TextForm";
 import BackgroundForm from "../components/BackgroundForm";
 import ImageForm from "../components/ImageForm";
 import ShapesForm from "../components/ShapesForm";
-import { useCallback, useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
-import axios from "axios";
-import Unsplash from "../components/Unsplash";
-import { useDispatch, useSelector } from "react-redux";
-import { resetSelected } from "../store/selectedElementSlice";
-import Icons from "../components/Icons";
-import { addPage, setPage } from "../store/pageSlice";
-import SmallBoard from "../components/SmallBoard";
-import { useRouter } from "next/router";
-import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
-import { child, get, onChildChanged, ref, update } from "firebase/database";
-import { database } from "../firebaseConfig";
 import CodeModal from "../components/CodeModal";
-import html2canvas from "html2canvas";
+import Unsplash from "../components/Unsplash";
+import SmallBoard from "../components/SmallBoard";
+import Icons from "../components/Icons";
 
 const Edit = () => {
-  const selectedElement = useSelector((state) => state.selectedElement);
-  const page = useSelector((state) => state.page);
   const dispatch = useDispatch();
-  const room = useSelector((state) => state.room);
   const router = useRouter();
-  const [activeNav, setActiveNav] = useState(<TextForm />);
-  const [activeButton, setActiveButton] = useState("textNav");
-  const [unsplashOpen, setUnsplashOpen] = useState(false);
-  const [iconsOpen, setIconsOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [roomId, setRoomId] = useState();
+
+  const [activeNav, setActiveNav] = useState(<TextForm />); // Stores the Active Navigation Components
+  const [activeButton, setActiveButton] = useState("textNav"); // Stores the id of the Active Nav Component
+  const [unsplashOpen, setUnsplashOpen] = useState(false); // Unplash Modal State
+  const [iconsOpen, setIconsOpen] = useState(false); // Icons Modal State
+  const [modalOpen, setModalOpen] = useState(false); // Share Code Modal State
+  const [roomId, setRoomId] = useState(); // Current Room Id
+
+  const selectedElement = useSelector((state) => state.selectedElement); // Current Selected Element By the User
+  const page = useSelector((state) => state.page); // Active Page and List of Pages
+  const room = useSelector((state) => state.room); // Current Room info
 
   const navChangeHandler = useCallback(
     (element, id) => {
@@ -52,12 +64,14 @@ const Edit = () => {
 
   useEffect(() => {
     console.log(router.query.q);
+    // Sets the current room id
     dispatch(
       setRoom({
         id: router.query.q,
       })
     );
 
+    // Sets the total number of pages of that particular room
     const dbRef = ref(database);
     get(child(dbRef, `rooms/${router.query.q}/pages`)).then((snapshot) => {
       if (snapshot.exists()) {
@@ -79,6 +93,7 @@ const Edit = () => {
     setRoomId({ id: router.query.q });
   }, [dispatch, router.query.q]);
 
+  // Sets the Active Nav according to the Selected Element
   useEffect(() => {
     if (selectedElement.id === "") {
       return;
@@ -106,8 +121,6 @@ const Edit = () => {
     onChildChanged(elementsRef, (snapshot) => {
       const updatedPage = snapshot.val();
       console.log("Updated Page!: ", updatedPage);
-      /* console.log("ROom Page!: ", room.pages);
-      console.log("ROom Page!: ", page.pages.length); */
       dispatch(
         setPage({
           pages: updatedPage,
@@ -116,6 +129,7 @@ const Edit = () => {
     });
   }, [router.query.q, dispatch, room.pages, page.pages.length]);
 
+  // Adds and syncs new pages across all users of the same room
   const addPageHandler = () => {
     console.log("ADD PAGE RAN!");
     console.log(room);
@@ -128,6 +142,7 @@ const Edit = () => {
     });
   };
 
+  // Downloads the Current Page
   const downloadHandler = useCallback(async () => {
     const board = document.querySelector("#board");
     console.log(board.setAttribute());
@@ -144,6 +159,59 @@ const Edit = () => {
     document.body.removeChild(tmpLink);
   }, []);
 
+  // Contains info and functions for the all Navigation Buttons
+  const navButtonsList = [
+    {
+      class: `${styles.navButton} ${styles.navButtonActive}`,
+      click: () => {
+        dispatch(resetSelected());
+        navChangeHandler(<TextForm />, "textNav");
+      },
+      id: "textNav",
+      icon: <TbTextResize style={{ fontSize: "24px" }} />,
+      text: "Text",
+    },
+    {
+      class: `${styles.navButton}`,
+      click: () => {
+        dispatch(resetSelected());
+        navChangeHandler(
+          <BackgroundForm setUnsplashOpen={setUnsplashOpen} />,
+          "backgroundNav"
+        );
+      },
+      id: "backgroundNav",
+      icon: <TbSquaresFilled style={{ fontSize: "24px" }} />,
+      text: "Background",
+    },
+    {
+      class: `${styles.navButton}`,
+      click: () => {
+        dispatch(resetSelected());
+        navChangeHandler(
+          <ImageForm
+            setUnsplashOpen={setUnsplashOpen}
+            setIconsOpen={setIconsOpen}
+          />,
+          "imageNav"
+        );
+      },
+      id: "imageNav",
+      icon: <IoMdImage style={{ fontSize: "24px" }} />,
+      text: "Image",
+    },
+    {
+      class: `${styles.navButton}`,
+      click: () => {
+        dispatch(resetSelected());
+        navChangeHandler(<ShapesForm />, "shapeNav");
+      },
+      id: "shapeNav",
+      icon: <FaShapes style={{ fontSize: "24px" }} />,
+      text: "Shapes",
+    },
+  ];
+
   return (
     <>
       <Toaster
@@ -158,75 +226,35 @@ const Edit = () => {
       />
 
       <div className={styles.container}>
-        {unsplashOpen ? (
+        {unsplashOpen && (
           <Unsplash
             setUnsplashOpen={setUnsplashOpen}
             type={activeButton === "imageNav" ? "image" : "background"}
           />
-        ) : (
-          <></>
         )}
-        {iconsOpen ? <Icons setIconsOpen={setIconsOpen} /> : <></>}
-        {modalOpen ? <CodeModal setModalOpen={setModalOpen} /> : <></>}
+        {iconsOpen && <Icons setIconsOpen={setIconsOpen} />}
+        {modalOpen && <CodeModal setModalOpen={setModalOpen} />}
         <nav className={styles.nav}>
           <input
             type="text"
             placeholder="File Name"
             className={styles.inputShaded}
           ></input>
-          <button
-            className={`${styles.navButton} ${styles.navButtonActive}`}
-            onClick={() => {
-              dispatch(resetSelected());
-              navChangeHandler(<TextForm />, "textNav");
-            }}
-            id="textNav"
-          >
-            <TbTextResize style={{ fontSize: "24px" }} />
-            Text
-          </button>
-          <button
-            className={`${styles.navButton}`}
-            onClick={() => {
-              dispatch(resetSelected());
-              navChangeHandler(
-                <BackgroundForm setUnsplashOpen={setUnsplashOpen} />,
-                "backgroundNav"
-              );
-            }}
-            id="backgroundNav"
-          >
-            <TbSquaresFilled style={{ fontSize: "24px" }} />
-            Background
-          </button>
-          <button
-            className={`${styles.navButton}`}
-            onClick={() => {
-              dispatch(resetSelected());
-              navChangeHandler(
-                <ImageForm
-                  setUnsplashOpen={setUnsplashOpen}
-                  setIconsOpen={setIconsOpen}
-                />,
-                "imageNav"
-              );
-            }}
-            id="imageNav"
-          >
-            <IoMdImage style={{ fontSize: "24px" }} />
-            Image
-          </button>
-          <button
-            className={`${styles.navButton}`}
-            onClick={() => {
-              dispatch(resetSelected());
-              navChangeHandler(<ShapesForm />, "shapeNav");
-            }}
-            id="shapeNav"
-          >
-            <FaShapes style={{ fontSize: "24px" }} />
-            Shapes
-          </button>
+          {/* Goes through the nav buttons array and creates a button for each */}
+          {navButtonsList.map((nav) => {
+            return (
+              <button
+                className={nav.class}
+                onClick={nav.click}
+                id={nav.id}
+                key={nav.id}
+              >
+                {nav.icon}
+                {nav.text}
+              </button>
+            );
+          })}
+
           <div className={styles.divider}></div>
           {activeNav}
           <div className={styles.divider}></div>
@@ -252,12 +280,13 @@ const Edit = () => {
                   onClick={addPageHandler}
                 >
                   <AiOutlinePlus style={{ fontSize: "24px" }} />
-                  Add Page
+                  Page
                 </button>
               </div>
             </div>
             <Board page={page.current} id="board" />
             <div className={styles.pages}>
+              {/* Displays all the pages of the room, by displaying its background image */}
               {page.pages.map((page) => {
                 return <SmallBoard key={page} page={page} />;
               })}

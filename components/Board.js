@@ -1,5 +1,7 @@
 import ItemResizer from "./ItemResizer";
 import styles from "../styles/Board.module.css";
+
+// Redux & Store
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -8,9 +10,10 @@ import {
   updateElement,
 } from "../store/elementSlice";
 import { resetSelected } from "../store/selectedElementSlice";
-import { FiZap } from "react-icons/fi";
-import Image from "next/image";
 import { setCurrentPage } from "../store/pageSlice";
+import { addBackground } from "../store/backgroundSlice";
+
+// Firebase
 import {
   onChildAdded,
   onChildChanged,
@@ -22,8 +25,8 @@ import {
   onChildRemoved,
 } from "firebase/database";
 import { database } from "../firebaseConfig";
-import { addBackground } from "../store/backgroundSlice";
 
+// It used to easily listen to keyboard events
 function useKey(key, cb) {
   const callbackRef = useRef(cb);
 
@@ -44,24 +47,33 @@ function useKey(key, cb) {
 }
 
 const Board = ({ page }) => {
+  const board = useRef();
+  const dispatch = useDispatch();
+
   const selected = useSelector((state) => state.selectedElement.id);
   const background = useSelector((state) => state.background);
   const roomId = useSelector((state) => state.room.id);
-  const board = useRef();
-  const dispatch = useDispatch();
-  const [updated, setUpdated] = useState();
   const elements = useSelector((state) => state.elements);
-  const pageElements = elements.filter((element) => element.page === page);
-  const pageBackground = background.filter((element) => element.page === page);
 
+  const pageElements = elements.filter((element) => element.page === page); // Gets all the elements of the current page
+  const pageBackground = background.filter((element) => element.page === page); // Gets the background of the current page
+
+  const [updated, setUpdated] = useState();
+
+  // Fetches the latest elements and background of the room and initialises it in the Redux Store
   useEffect(() => {
     console.log("RANN");
+    if (roomId === undefined || roomId === null || roomId === "") {
+      return;
+    }
     onValue(
-      ref(database, "elements/" + roomId),
+      ref(database, `elements/${roomId}`),
       (snapshot) => {
+        if (!snapshot.exists()) {
+          return;
+        }
         snapshot.forEach((childSnapshot) => {
           const childValue = childSnapshot.val();
-          console.log(childValue);
           dispatch(addElement(childValue));
         });
       },
@@ -96,6 +108,7 @@ const Board = ({ page }) => {
         console.log("RETURNED: " + updatedElement.id);
         return;
       }
+      console.log("TYPE::", snapshot.val().type);
       const data = {
         height: updatedElement.height,
         width: updatedElement.width,

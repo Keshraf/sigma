@@ -1,15 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [
-  {
-    page: 1,
-    background:
-      "https://images.unsplash.com/photo-1622737133809-d95047b9e673?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjIyMTJ8MHwxfHNlYXJjaHw0N3x8d2FsbHBhcGVyfGVufDB8fHx8MTY2MjYzNjQ2Nw&ixlib=rb-1.2.1&q=80&w=1080",
-    type: "background",
-    source: "unsplash",
-    id: "background_id_xyzyzy",
-  },
-];
+const initialState = [];
 
 export const backgroundSlice = createSlice({
   name: "background",
