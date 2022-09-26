@@ -1,21 +1,22 @@
-.clickButtonShaded {
-    width: 100%;
-    height: 50px;   
-    background-color: #303544;
+.alignRow {
     display: flex;
+    width: 100%;
+    height: auto;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    border: none;
+    gap: 15px;
+}
+
+.inputUnshaded {
+    background-color: transparent;
+    padding-left: 24px;
+    padding-right: 24px;
+    height: 50px;
+    width: 100%;
+    font-size: 18px;
+    border: 1px solid #121219;
     border-radius: 5px;
     font-family: 'Poppins';
-    font-size: 18px;
-    gap:5px;
-    padding-left: 24px;
-    cursor: pointer;
-}
-.clickButtonShaded:hover{
-    background-color: #171720;
+    margin-bottom: 15px;
 }
 
 .clickButtonUnshaded {
@@ -32,24 +33,10 @@
     font-size: 18px;
     gap:15px;
     padding-left: 24px;
+    margin-bottom: 15px;
 }
-
 .clickButtonUnshaded:hover{
     background-color: #171720;
-}
-
-.buttonLabel {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap:15px
-}
-
-.bgLayout {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
 }
 
 .submitButton {
@@ -65,8 +52,4 @@
     border: none;
     border-radius: 5px;
     font-family: 'Poppins';
-}
-
-.launchButton {
-    background-color: transparent;
 }

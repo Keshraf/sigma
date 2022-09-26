@@ -8,6 +8,7 @@ import {
   addElement,
   removeElement,
   updateElement,
+  updateIconElement,
   updateShapeElement,
   updateTextElement,
 } from "../store/elementSlice";
@@ -139,6 +140,13 @@ const Board = ({ page }) => {
           id: updatedElement.id,
         };
         dispatch(updateShapeElement(newShape));
+      } else if (updatedElement.type === "icon") {
+        const newIcon = {
+          color: updatedElement.color,
+          size: updatedElement.size,
+          id: updatedElement.id,
+        };
+        dispatch(updateIconElement(newIcon));
       }
       setUpdated(data.id);
     });

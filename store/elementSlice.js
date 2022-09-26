@@ -91,6 +91,21 @@ export const elementSlice = createSlice({
 
       return newState;
     },
+    updateIconElement(state, action) {
+      const newState = state.map((element) => {
+        if (element.id === action.payload.id) {
+          return {
+            ...element,
+            color: action.payload.color,
+            size: action.payload.size,
+          };
+        } else {
+          return element;
+        }
+      });
+
+      return newState;
+    },
   },
 });
 
@@ -100,6 +115,7 @@ export const {
   updateElement,
   updateTextElement,
   updateShapeElement,
+  updateIconElement,
 } = elementSlice.actions;
 
 export default elementSlice.reducer;

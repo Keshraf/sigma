@@ -2,7 +2,7 @@
 import styles from "../styles/Edit.module.css";
 
 // Icons
-import { TbSquaresFilled, TbTextResize } from "react-icons/tb";
+import { TbSquaresFilled, TbTextResize, TbLayoutGridAdd } from "react-icons/tb";
 import { IoMdImage } from "react-icons/io";
 import { AiOutlineUserAdd, AiOutlinePlus } from "react-icons/ai";
 import { FaShapes } from "react-icons/fa";
@@ -33,7 +33,7 @@ import ShapesForm from "../components/ShapesForm";
 import CodeModal from "../components/CodeModal";
 import Unsplash from "../components/Unsplash";
 import SmallBoard from "../components/SmallBoard";
-import Icons from "../components/Icons";
+import IconForm from "../components/IconForm";
 
 const Edit = () => {
   const dispatch = useDispatch();
@@ -42,7 +42,6 @@ const Edit = () => {
   const [activeNav, setActiveNav] = useState(<TextForm />); // Stores the Active Navigation Components
   const [activeButton, setActiveButton] = useState("textNav"); // Stores the id of the Active Nav Component
   const [unsplashOpen, setUnsplashOpen] = useState(false); // Unplash Modal State
-  const [iconsOpen, setIconsOpen] = useState(false); // Icons Modal State
   const [modalOpen, setModalOpen] = useState(false); // Share Code Modal State
   const [roomId, setRoomId] = useState(); // Current Room Id
 
@@ -101,17 +100,13 @@ const Edit = () => {
       navChangeHandler(<TextForm />, "textNav");
     } else if (selectedElement.type === "shape") {
       navChangeHandler(<ShapesForm />, "shapeNav");
-    } else if (
-      selectedElement.type === "image" ||
-      selectedElement.type === "icon"
-    ) {
+    } else if (selectedElement.type === "image") {
       navChangeHandler(
-        <ImageForm
-          setUnsplashOpen={setUnsplashOpen}
-          setIconsOpen={setIconsOpen}
-        />,
+        <ImageForm setUnsplashOpen={setUnsplashOpen} />,
         "imageNav"
       );
+    } else if (selectedElement.type === "icon") {
+      navChangeHandler(<IconForm />, "iconNav");
     }
   }, [selectedElement, navChangeHandler]);
 
@@ -189,16 +184,23 @@ const Edit = () => {
       click: () => {
         dispatch(resetSelected());
         navChangeHandler(
-          <ImageForm
-            setUnsplashOpen={setUnsplashOpen}
-            setIconsOpen={setIconsOpen}
-          />,
+          <ImageForm setUnsplashOpen={setUnsplashOpen} />,
           "imageNav"
         );
       },
       id: "imageNav",
       icon: <IoMdImage style={{ fontSize: "24px" }} />,
       text: "Image",
+    },
+    {
+      class: `${styles.navButton}`,
+      click: () => {
+        dispatch(resetSelected());
+        navChangeHandler(<IconForm />, "iconNav");
+      },
+      id: "iconNav",
+      icon: <TbLayoutGridAdd style={{ fontSize: "24px" }} />,
+      text: "Icons",
     },
     {
       class: `${styles.navButton}`,
@@ -232,7 +234,6 @@ const Edit = () => {
             type={activeButton === "imageNav" ? "image" : "background"}
           />
         )}
-        {iconsOpen && <Icons setIconsOpen={setIconsOpen} />}
         {modalOpen && <CodeModal setModalOpen={setModalOpen} />}
         <nav className={styles.nav}>
           <input

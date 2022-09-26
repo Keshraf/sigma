@@ -1,44 +1,19 @@
 import styles from "../styles/Icons.module.css";
+
+// Imports all the icons in feather icons
 import * as FeatherIcons from "react-icons/fi";
+
+// Icons
 import { FaReact } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { addElement } from "../store/elementSlice";
-import { nanoid } from "nanoid";
-import { toast } from "react-hot-toast";
-import { push, set, ref } from "firebase/database";
-import { database } from "../firebaseConfig";
 
-const Icons = ({ setIconsOpen }) => {
-  const dispatch = useDispatch();
+const Icons = ({ setIconsOpen, setName }) => {
   const icons = Object.keys(FeatherIcons);
   const values = Object.values(FeatherIcons);
-  const page = useSelector((state) => state.page.current);
-  const roomId = useSelector((state) => state.room.id);
 
   const addIconHandler = (e) => {
     const name = e.currentTarget.attributes.name.value;
-
-    const data = {
-      page,
-      id: nanoid(),
-      width: 55,
-      height: 55,
-      x: 15,
-      y: 15,
-      type: "icon",
-      name,
-      set: "feather",
-      size: 18,
-      color: "#FFFFFF",
-      roomId,
-    };
-    console.log(data);
-    dispatch(addElement(data));
-    const elementRef = ref(database, "elements/" + roomId);
-    set(push(elementRef), data);
-    setIconsOpen(false);
-    toast.success("Icon Added!");
+    setName(name);
   };
 
   return (
@@ -54,6 +29,7 @@ const Icons = ({ setIconsOpen }) => {
         </div>
       </div>
       <div className={styles.innerContainer}>
+        {/* It maps over each function in the react-icons package and executes it */}
         {values.map((value, index) => {
           return (
             <div

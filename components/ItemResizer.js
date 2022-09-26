@@ -241,6 +241,9 @@ const ItemResizer = ({ info, disable, updated, children }) => {
       />
     );
   } else if (info?.type === "icon") {
+    if (!info.name) {
+      return;
+    }
     const icon = FeatherIcons[info.name];
     element = (
       <div
