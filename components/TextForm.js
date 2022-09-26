@@ -57,22 +57,6 @@ const TextForm = () => {
     }
   }, [selected]);
 
-  // Sets Color and Warns on wrong input
-  const colorBlurHandler = (e) => {
-    const value = e.target.value;
-    const x = "#123456";
-    if (value.length < 7) {
-      toast.error("Invalid Color Input");
-      setColor("#FFFFFF");
-      return;
-    }
-    if (!value.startsWith("#")) {
-      toast.error(`Add '#' to your Color Input`);
-      setColor("#FFFFFF");
-      return;
-    }
-  };
-
   // Updates or Inserts Text
   const clickHandler = (e) => {
     e.preventDefault();

@@ -38,21 +38,6 @@ const ShapesForm = () => {
     }
   }, [isShape, selected.color]);
 
-  // Sets Color and Warns on wrong input
-  const colorBlurHandler = (e) => {
-    const value = e.target.value;
-    if (value.length < 7) {
-      toast.error("Invalid Color Input");
-      setColor("#FFFFFF");
-      return;
-    }
-    if (!value.startsWith("#")) {
-      toast.error(`Add '#' to your Color Input`);
-      setColor("#FFFFFF");
-      return;
-    }
-  };
-
   const submitHandler = () => {
     console.log("Entered", selected);
     if (isShape) {
