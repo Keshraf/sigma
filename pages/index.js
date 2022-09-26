@@ -137,7 +137,7 @@ export default function Home() {
         >
           Made by Ketan Saraf (Keshraf)
         </a>
-        <a>
+        <a href="https://github.com/Keshraf/sigma#features" target="blank">
           <button
             type="button"
             className={`${styles.github} ${styles.feature}`}
