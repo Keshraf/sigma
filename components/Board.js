@@ -211,13 +211,19 @@ const Board = ({ page }) => {
     if (e.key !== "Delete") {
       return;
     }
+    if (!selected) {
+      console.log("No ID to Delete!");
+      return;
+    }
+    const deletedId = selected;
+    console.log("Id to be deleted: ", deletedId);
 
     const dbRef = ref(database);
     get(child(dbRef, `elements/${roomId}`)).then((snapshot) => {
       if (snapshot.exists()) {
         snapshot.forEach((childSnapshot) => {
           const childValue = childSnapshot.val();
-          if (childValue.id === selected) {
+          if (childValue.id === deletedId) {
             console.log("REMOVED!!", childValue.id);
             remove(ref(database, `elements/${roomId}/${childSnapshot.key}`));
           }
@@ -229,7 +235,7 @@ const Board = ({ page }) => {
 
     dispatch(
       removeElement({
-        id: selected,
+        id: deletedId,
       })
     );
     dispatch(resetSelected());
