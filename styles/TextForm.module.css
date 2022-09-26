@@ -7,10 +7,10 @@
 }
 
 .alignBox {
-    width: 140px;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
     border: 1px solid #121219;
     border-radius: 5px;
@@ -56,22 +56,6 @@
     border-radius: 5px;
     font-family: 'Poppins';
     margin-bottom: 15px;
-}
-
-.colorLabel {
-    width: 24px;
-    height: 24px;
-    border: 1px solid #121219;
-    cursor: pointer;
-}
-
-.colorInputText {
-    background-color: transparent;
-    font-size: 16px;
-    color: #fff;
-    width: 75px;
-    border: none;
-    outline: none;
 }
 
 

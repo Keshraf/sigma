@@ -16,6 +16,9 @@ import { database } from "../firebaseConfig";
 // Custom Hook
 import useElementUpdate from "../hooks/useElementUpdate";
 
+// Components
+import ColorPicker from "./ColorPicker";
+
 const ShapesForm = () => {
   const dispatch = useDispatch();
   const elementUpdater = useElementUpdate();
@@ -109,27 +112,7 @@ const ShapesForm = () => {
           })}
         </div>
       )}
-      <div className={styles.alignBox}>
-        <label
-          htmlFor="color"
-          className={styles.colorLabel}
-          style={{ backgroundColor: color }}
-        ></label>
-        <input
-          id="color"
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          style={{ display: "none", backgroundColor: color }}
-        />
-        <input
-          type="text"
-          value={color.toUpperCase()}
-          onBlur={colorBlurHandler}
-          onChange={(e) => setColor(e.target.value)}
-          className={styles.colorInputText}
-        ></input>
-      </div>
+      <ColorPicker color={color} setColor={setColor} />
       <button className={styles.submitButton} onClick={submitHandler}>
         {isShape
           ? "Change Color"

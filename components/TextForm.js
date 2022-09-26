@@ -8,7 +8,7 @@ import { nanoid } from "nanoid";
 import toast from "react-hot-toast";
 
 // React & Redux
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement, updateTextElement } from "../store/elementSlice";
 
@@ -18,6 +18,9 @@ import { database } from "../firebaseConfig";
 
 // Custom Hook
 import useElementUpdate from "../hooks/useElementUpdate";
+
+// Components
+import ColorPicker from "./ColorPicker";
 
 const TextForm = () => {
   const dispatch = useDispatch();
@@ -258,27 +261,7 @@ const TextForm = () => {
             <TbAlignRight style={{ fontSize: "24px" }} />
           </div>
         </div>
-        <div className={styles.alignBox}>
-          <label
-            htmlFor="color"
-            className={styles.colorLabel}
-            style={{ backgroundColor: color }}
-          ></label>
-          <input
-            id="color"
-            type="color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            style={{ display: "none", backgroundColor: color }}
-          />
-          <input
-            type="text"
-            value={color.toUpperCase()}
-            onBlur={colorBlurHandler}
-            onChange={(e) => setColor(e.target.value)}
-            className={styles.colorInputText}
-          ></input>
-        </div>
+        <ColorPicker color={color} setColor={setColor} />
       </div>
       <button className={styles.submitButton} onClick={clickHandler}>
         {selected.type === "text" ? "Update Text" : "Insert Text"}
