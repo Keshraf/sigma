@@ -5,16 +5,20 @@ import { nanoid } from "nanoid";
 import toast from "react-hot-toast";
 
 // React & Redux
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addElement } from "../store/elementSlice";
+import { addElement, updateShapeElement } from "../store/elementSlice";
 
 // Firebase
 import { push, set, ref } from "firebase/database";
 import { database } from "../firebaseConfig";
 
+// Custom Hook
+import useElementUpdate from "../hooks/useElementUpdate";
+
 const ShapesForm = () => {
   const dispatch = useDispatch();
+  const elementUpdater = useElementUpdate();
 
   const [shapeSelected, setShapeSelected] = useState(null);
   const [color, setColor] = useState("#FFFFFF");
@@ -23,10 +27,17 @@ const ShapesForm = () => {
   const roomId = useSelector((state) => state.room.id); // gets the current room id
   const selected = useSelector((state) => state.selectedElement); // Gets the selected Element
 
+  useEffect(() => {
+    if (isShape) {
+      setColor(selected.color);
+    } else {
+      setColor("#FFFFFF");
+    }
+  }, [isShape, selected.color]);
+
   // Sets Color and Warns on wrong input
   const colorBlurHandler = (e) => {
     const value = e.target.value;
-    const x = "#123456";
     if (value.length < 7) {
       toast.error("Invalid Color Input");
       setColor("#FFFFFF");
@@ -40,50 +51,64 @@ const ShapesForm = () => {
   };
 
   const submitHandler = () => {
-    if (shapeSelected === null) {
-      return;
+    console.log("Entered", selected);
+    if (isShape) {
+      const data = {
+        color,
+        id: selected.id,
+      };
+      dispatch(updateShapeElement(data));
+      elementUpdater(data);
+      toast.success(`${shapeSelected} color changed!`);
+    } else {
+      if (shapeSelected === null) {
+        return;
+      }
+      const data = {
+        id: nanoid(),
+        x: 15,
+        y: 15,
+        width: 100,
+        height: 100,
+        type: "shape",
+        shape: shapeSelected,
+        color,
+        page,
+        roomId,
+      };
+      dispatch(addElement(data));
+      const elementRef = ref(database, "elements/" + roomId);
+      set(push(elementRef), data);
+      toast.success(`${shapeSelected} added!`);
     }
-    const data = {
-      id: nanoid(),
-      x: 15,
-      y: 15,
-      width: 100,
-      height: 100,
-      type: "shape",
-      shape: shapeSelected,
-      color,
-      page,
-      roomId,
-    };
-    dispatch(addElement(data));
-    const elementRef = ref(database, "elements/" + roomId);
-    set(push(elementRef), data);
-    toast.success(`${shapeSelected} added!`);
   };
 
   const shapes = ["square", "circle", "line", "triangle"];
+  const isShape = selected.type === "shape";
 
   return (
     <div className={styles.formLayout}>
-      <div className={styles.shapesLayout}>
-        {shapes.map((shape) => {
-          return (
-            <div
-              className={styles.shapesContainer}
-              onClick={() => setShapeSelected(shape)}
-              style={{
-                borderColor: shapeSelected === shape ? "#2599FF" : "#171720",
-              }}
-              key={shape}
-            >
+      {!isShape && (
+        <div className={styles.shapesLayout}>
+          {shapes.map((shape) => {
+            return (
               <div
-                className={styles[shape]}
-                style={{ backgroundColor: color }}
-              ></div>
-            </div>
-          );
-        })}
-      </div>
+                className={styles.shapesContainer}
+                onClick={() => setShapeSelected(shape)}
+                style={{
+                  borderColor: shapeSelected === shape ? "#2599FF" : "#171720",
+                }}
+                key={shape}
+              >
+                <div
+                  className={styles[shape]}
+                  style={{ backgroundColor: color }}
+                ></div>
+              </div>
+            );
+          })}
+        </div>
+      )}
       <div className={styles.alignBox}>
         <label
           htmlFor="color"
@@ -106,7 +131,9 @@ const ShapesForm = () => {
         ></input>
       </div>
       <button className={styles.submitButton} onClick={submitHandler}>
-        {`Insert ${shapeSelected === null ? "" : shapeSelected}`}
+        {isShape
+          ? "Change Color"
+          : `Insert ${shapeSelected === null ? "" : shapeSelected}`}
       </button>
     </div>
   );

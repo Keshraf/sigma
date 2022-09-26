@@ -77,10 +77,29 @@ export const elementSlice = createSlice({
 
       return newState;
     },
+    updateShapeElement(state, action) {
+      const newState = state.map((element) => {
+        if (element.id === action.payload.id) {
+          return {
+            ...element,
+            color: action.payload.color,
+          };
+        } else {
+          return element;
+        }
+      });
+
+      return newState;
+    },
   },
 });
 
-export const { addElement, removeElement, updateElement, updateTextElement } =
-  elementSlice.actions;
+export const {
+  addElement,
+  removeElement,
+  updateElement,
+  updateTextElement,
+  updateShapeElement,
+} = elementSlice.actions;
 
 export default elementSlice.reducer;

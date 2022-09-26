@@ -8,6 +8,7 @@ import {
   addElement,
   removeElement,
   updateElement,
+  updateShapeElement,
   updateTextElement,
 } from "../store/elementSlice";
 import { resetSelected } from "../store/selectedElementSlice";
@@ -120,6 +121,7 @@ const Board = ({ page }) => {
       console.log("UPDATED DATA", data, "DATA ID: ", data.id);
       dispatch(updateElement(data));
 
+      // Checks the element type & updates its specific properties
       if (updatedElement.type === "text") {
         const newText = {
           id: updatedElement.id,
@@ -131,8 +133,13 @@ const Board = ({ page }) => {
           align: updatedElement.align,
         };
         dispatch(updateTextElement(newText));
+      } else if (updatedElement.type === "shape") {
+        const newShape = {
+          color: updatedElement.color,
+          id: updatedElement.id,
+        };
+        dispatch(updateShapeElement(newShape));
       }
-
       setUpdated(data.id);
     });
   }, [roomId, dispatch]);
