@@ -1,29 +1,41 @@
 import styles from "../styles/ImageForm.module.css";
+
+// Icons
 import { FiUploadCloud } from "react-icons/fi";
-import { CgUnsplash } from "react-icons/cg";
 import { RiUnsplashFill } from "react-icons/ri";
-import { SiIcons8 } from "react-icons/si";
-import { storage } from "../firebaseConfig";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+
+// Other Libs
 import { nanoid } from "nanoid";
+import { toast } from "react-hot-toast";
+
+// Redux
 import { addElement } from "../store/elementSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
-import Image from "next/image";
+
+// Firebase
 import { push, set, ref as refDatabase } from "firebase/database";
 import { database } from "../firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../firebaseConfig";
 
-const ImageForm = ({ setUnsplashOpen, setIconsOpen }) => {
+const ImageForm = ({ setUnsplashOpen }) => {
   const dispatch = useDispatch();
-  const page = useSelector((state) => state.page.current);
-  const roomId = useSelector((state) => state.room.id);
+
+  const page = useSelector((state) => state.page.current); // Gets the current page number
+  const roomId = useSelector((state) => state.room.id); // Gets the current roomId
+
   const uploadHandler = (e) => {
     const file = e.target.files[0];
     console.log(file);
+
+    // Creates a image location in the firebase storage
     const imageRef = ref(storage, `images/image_${nanoid()}.jpg`);
 
+    // Uploads the file to the above location
     const uploadingImage = uploadBytes(imageRef, file).then((snapshot) => {
       console.log(snapshot, "Snapshot");
+
+      // Fetches the URL of the uploaded Image
       const loadingImage = getDownloadURL(imageRef).then((url) => {
         const data = {
           page,
@@ -82,15 +94,7 @@ const ImageForm = ({ setUnsplashOpen, setIconsOpen }) => {
         <RiUnsplashFill style={{ fontSize: "24px" }} />
         Launch Unsplash
       </div>
-      <div
-        className={styles.clickButtonUnshaded}
-        style={{ cursor: "pointer" }}
-        onClick={(e) => setIconsOpen(true)}
-      >
-        <SiIcons8 style={{ fontSize: "24px" }} />
-        Launch Iconify
-      </div>
-      <button className={`${styles.submitButton}`}>Insert</button>
+      <button className={styles.submitButton}>Insert Image</button>
     </div>
   );
 };
