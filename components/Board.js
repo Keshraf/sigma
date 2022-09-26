@@ -8,6 +8,7 @@ import {
   addElement,
   removeElement,
   updateElement,
+  updateTextElement,
 } from "../store/elementSlice";
 import { resetSelected } from "../store/selectedElementSlice";
 import { setCurrentPage } from "../store/pageSlice";
@@ -104,7 +105,7 @@ const Board = ({ page }) => {
       const updatedElement = snapshot.val();
       console.log("UPDATED EL:", updatedElement);
       console.log("UPDATED EL ID:", updatedElement.id);
-      if (!updatedElement.id) {
+      if (!updatedElement.id || updateElement.id) {
         console.log("RETURNED: " + updatedElement.id);
         return;
       }
@@ -118,6 +119,20 @@ const Board = ({ page }) => {
       };
       console.log("UPDATED DATA", data, "DATA ID: ", data.id);
       dispatch(updateElement(data));
+
+      if (updatedElement.type === "text") {
+        const newText = {
+          id: updatedElement.id,
+          content: updatedElement.content,
+          color: updatedElement.color,
+          size: updatedElement.size,
+          font: updatedElement.font,
+          weight: updatedElement.weight,
+          align: updatedElement.align,
+        };
+        dispatch(updateTextElement(newText));
+      }
+
       setUpdated(data.id);
     });
   }, [roomId, dispatch]);

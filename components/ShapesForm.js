@@ -1,19 +1,29 @@
+import styles from "../styles/ShapesForm.module.css";
+
+// Other libs
 import { nanoid } from "nanoid";
-import { useState } from "react";
 import toast from "react-hot-toast";
+
+// React & Redux
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement } from "../store/elementSlice";
-import styles from "../styles/ShapesForm.module.css";
+
+// Firebase
 import { push, set, ref } from "firebase/database";
 import { database } from "../firebaseConfig";
 
 const ShapesForm = () => {
+  const dispatch = useDispatch();
+
   const [shapeSelected, setShapeSelected] = useState(null);
   const [color, setColor] = useState("#FFFFFF");
-  const dispatch = useDispatch();
-  const page = useSelector((state) => state.page.current);
-  const roomId = useSelector((state) => state.room.id);
 
+  const page = useSelector((state) => state.page.current); // gets the current page
+  const roomId = useSelector((state) => state.room.id); // gets the current room id
+  const selected = useSelector((state) => state.selectedElement); // Gets the selected Element
+
+  // Sets Color and Warns on wrong input
   const colorBlurHandler = (e) => {
     const value = e.target.value;
     const x = "#123456";
@@ -51,54 +61,28 @@ const ShapesForm = () => {
     toast.success(`${shapeSelected} added!`);
   };
 
+  const shapes = ["square", "circle", "line", "triangle"];
+
   return (
     <div className={styles.formLayout}>
       <div className={styles.shapesLayout}>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("square")}
-          style={{
-            borderColor: shapeSelected === "square" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div
-            className={styles.square}
-            style={{ backgroundColor: color }}
-          ></div>
-        </div>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("circle")}
-          style={{
-            borderColor: shapeSelected === "circle" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div
-            className={styles.circle}
-            style={{ backgroundColor: color }}
-          ></div>
-        </div>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("line")}
-          style={{
-            borderColor: shapeSelected === "line" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div className={styles.line} style={{ backgroundColor: color }}></div>
-        </div>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("triangle")}
-          style={{
-            borderColor: shapeSelected === "triangle" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div
-            className={styles.triangle}
-            style={{ backgroundColor: color }}
-          ></div>
-        </div>
+        {shapes.map((shape) => {
+          return (
+            <div
+              className={styles.shapesContainer}
+              onClick={() => setShapeSelected(shape)}
+              style={{
+                borderColor: shapeSelected === shape ? "#2599FF" : "#171720",
+              }}
+              key={shape}
+            >
+              <div
+                className={styles[shape]}
+                style={{ backgroundColor: color }}
+              ></div>
+            </div>
+          );
+        })}
       </div>
       <div className={styles.alignBox}>
         <label
@@ -122,7 +106,7 @@ const ShapesForm = () => {
         ></input>
       </div>
       <button className={styles.submitButton} onClick={submitHandler}>
-        Insert
+        {`Insert ${shapeSelected === null ? "" : shapeSelected}`}
       </button>
     </div>
   );
