@@ -31,7 +31,6 @@
   font-size: 24px;
   width: 300px;
   height: 50px;
-  font-stretch: 10%;
 }
 
 .github {
@@ -187,8 +186,8 @@ user-select: none;
 
 .previewBlur{
   position: absolute;
-width: 892px;
-height: 617px;
+width: 110%;
+height: 110%;
 
 background: linear-gradient(272.79deg, rgba(0, 0, 0, 0.61) 3.54%, rgba(48, 53, 68, 0.61) 81.55%), linear-gradient(153.79deg, #1DAACC 0.41%, #20222D 50.2%);
 filter: blur(45px);
@@ -223,4 +222,82 @@ filter: blur(45px);
 
 .signature:hover{
   text-decoration: underline;
+}
+
+.star2{
+  display: none;
+}
+
+@media screen and (max-width:1100px) {
+  .container{
+    padding-left: 50px;
+    padding-right: 50px;
+    align-items: flex-start;
+  }
+
+  .heading{
+    text-align: left;
+    width: 100%;
+    height: auto;
+  }
+
+  .caption{
+    text-align: left;
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .heading{
+    font-size: 52px;
+    line-height: 60px;
+
+  }
+  .caption{
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 30px;
+  }
+  .form{
+    display: none;
+  }
+  .switchForm{
+    display: none;
+  }
+  .footer{
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap:10px;
+  }
+  .star{
+    display: none;
+  }
+  .star2{
+    display: flex;
+    width: 200px;
+    height: 50px;
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width:450px) {
+  .container{
+    padding-top: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 75px;
+  }
+  .heading{
+    margin-top: 10px;
+  }
+  .update{
+    margin-top: 50px;
+  }
+  .name{
+    font-size: 18px;
+  }
+  .nav{
+    width: 120px;
+  }
 }

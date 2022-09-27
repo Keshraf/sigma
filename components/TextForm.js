@@ -1,17 +1,36 @@
-import { useEffect, useState } from "react";
+import styles from "../styles/TextForm.module.css";
+
+// Icons
 import { TbAlignLeft, TbAlignRight, TbAlignCenter } from "react-icons/tb";
-import styles from "./TextForm.module.css";
+
+// Other Libs
 import { nanoid } from "nanoid";
+import toast from "react-hot-toast";
+
+// React & Redux
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addElement, updateTextElement } from "../store/elementSlice";
-import toast from "react-hot-toast";
+
+// Firebase
 import { push, set, ref } from "firebase/database";
 import { database } from "../firebaseConfig";
 
+// Custom Hook
+import useElementUpdate from "../hooks/useElementUpdate";
+
+// Components
+import ColorPicker from "./ColorPicker";
+
 const TextForm = () => {
-  const selected = useSelector((state) => state.selectedElement);
-  const page = useSelector((state) => state.page.current);
-  const roomId = useSelector((state) => state.room.id);
+  const dispatch = useDispatch();
+  const elementUpdater = useElementUpdate();
+
+  const selected = useSelector((state) => state.selectedElement); // Gets the selected Element
+  const page = useSelector((state) => state.page.current); // gets the current page
+  const roomId = useSelector((state) => state.room.id); // gets the room id
+
+  // Different states for each text property
   const [content, setContent] = useState("");
   const [color, setColor] = useState("#FFFFFF");
   const [size, setSize] = useState(16);
@@ -19,6 +38,7 @@ const TextForm = () => {
   const [weight, setWeight] = useState("400");
   const [align, setAlign] = useState("center");
 
+  // Sets the form
   useEffect(() => {
     if (selected.type === "text") {
       setContent(selected.content);
@@ -37,23 +57,7 @@ const TextForm = () => {
     }
   }, [selected]);
 
-  const dispatch = useDispatch();
-
-  const colorBlurHandler = (e) => {
-    const value = e.target.value;
-    const x = "#123456";
-    if (value.length < 7) {
-      toast.error("Invalid Color Input");
-      setColor("#FFFFFF");
-      return;
-    }
-    if (!value.startsWith("#")) {
-      toast.error(`Add '#' to your Color Input`);
-      setColor("#FFFFFF");
-      return;
-    }
-  };
-
+  // Updates or Inserts Text
   const clickHandler = (e) => {
     e.preventDefault();
     if (content === "") {
@@ -72,6 +76,7 @@ const TextForm = () => {
         align,
       };
       dispatch(updateTextElement(data));
+      elementUpdater(data);
       toast.success("Text Updated!");
     } else {
       const data = {
@@ -99,11 +104,44 @@ const TextForm = () => {
     }
   };
 
+  // Contains all the font data
+  const fontsList = [
+    {
+      fontName: "Roboto",
+      weights: [100, 300, 400, 500, 600, 700, 900],
+    },
+    {
+      fontName: "Inter",
+      weights: [100, 300, 400, 500, 600, 700, 800, 900],
+    },
+    {
+      fontName: "Poppins",
+      weights: [100, 300, 400, 500, 600, 700, 800, 900],
+    },
+    {
+      fontName: "Montserrat",
+      weights: [100, 300, 400, 500, 600, 700, 800, 900],
+    },
+  ];
+
+  // Conatins font weight and its equivalent text form
+  const weightDefine = {
+    100: "Thin",
+    200: "Extra Light",
+    300: "Light",
+    400: "Regular",
+    500: "Medium",
+    600: "Semi-Bold",
+    700: "Bold",
+    800: "Extra Bold",
+    900: "Black",
+  };
+
   return (
     <form className={styles.textForm}>
       <input
         type="text"
-        placeholder="Untitled"
+        placeholder="Enter your text"
         className={styles.inputShaded}
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -113,38 +151,26 @@ const TextForm = () => {
         name="fonts"
         id="font-select"
         className={styles.inputUnshaded}
-        onChange={(e) => setFont(e.target.value)}
+        onChange={(e) => {
+          setFont(e.target.value);
+          setWeight(400);
+        }}
         style={{ cursor: "pointer" }}
         value={font}
       >
-        <option
-          value="Roboto"
-          className={styles.options}
-          style={{ fontFamily: "Roboto" }}
-        >
-          Roboto
-        </option>
-        <option
-          value="Inter"
-          className={styles.options}
-          style={{ fontFamily: "Inter" }}
-        >
-          Inter
-        </option>
-        <option
-          value="Poppins"
-          className={styles.options}
-          style={{ fontFamily: "Poppins" }}
-        >
-          Poppins
-        </option>
-        <option
-          value="Montserrat"
-          className={styles.options}
-          style={{ fontFamily: "Montserrat" }}
-        >
-          Montserrat
-        </option>
+        {/* Lists all the fonts in the font list */}
+        {fontsList.map((fontInfo) => {
+          return (
+            <option
+              value={fontInfo.fontName}
+              style={{ fontFamily: fontInfo.fontName }}
+              className={styles.options}
+              key={fontInfo.fontName}
+            >
+              {fontInfo.fontName}
+            </option>
+          );
+        })}
       </select>
       <div className={styles.alignRow}>
         <select
@@ -154,15 +180,24 @@ const TextForm = () => {
           onChange={(e) => setWeight(e.target.value)}
           style={{ cursor: "pointer" }}
         >
-          <option value="400" className={styles.options}>
-            Light
-          </option>
-          <option value="500" className={styles.options}>
-            Regular
-          </option>
-          <option value="700" className={styles.options}>
-            Bold
-          </option>
+          {/* Lists all the font weights that are available for the chosen font */}
+          {fontsList.map((fontInfo) => {
+            if (fontInfo.fontName === font) {
+              return fontInfo.weights.map((weight) => {
+                const weightName = weightDefine[weight];
+                return (
+                  <option
+                    value={weight}
+                    className={styles.options}
+                    key={`${font}_${weightName}`}
+                    style={{ fontWeight: weight }}
+                  >
+                    {weightName}
+                  </option>
+                );
+              });
+            }
+          })}
         </select>
         <input
           type="number"
@@ -210,30 +245,10 @@ const TextForm = () => {
             <TbAlignRight style={{ fontSize: "24px" }} />
           </div>
         </div>
-        <div className={styles.alignBox}>
-          <label
-            htmlFor="color"
-            className={styles.colorLabel}
-            style={{ backgroundColor: color }}
-          ></label>
-          <input
-            id="color"
-            type="color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            style={{ display: "none", backgroundColor: color }}
-          />
-          <input
-            type="text"
-            value={color.toUpperCase()}
-            onBlur={colorBlurHandler}
-            onChange={(e) => setColor(e.target.value)}
-            className={styles.colorInputText}
-          ></input>
-        </div>
+        <ColorPicker color={color} setColor={setColor} />
       </div>
       <button className={styles.submitButton} onClick={clickHandler}>
-        Insert
+        {selected.type === "text" ? "Update Text" : "Insert Text"}
       </button>
     </form>
   );

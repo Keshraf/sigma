@@ -12,7 +12,12 @@
     font-size: 18px;
     gap:5px;
     padding-left: 24px;
+    cursor: pointer;
 }
+.clickButtonShaded:hover{
+    background-color: #171720;
+}
+
 .clickButtonUnshaded {
     width: 100%;
     height: 50px;   
@@ -27,6 +32,10 @@
     font-size: 18px;
     gap:15px;
     padding-left: 24px;
+}
+
+.clickButtonUnshaded:hover{
+    background-color: #171720;
 }
 
 .buttonLabel {
@@ -58,41 +67,6 @@
     font-family: 'Poppins';
 }
 
-.alignDiv {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-.colorLabel {
-    width: 24px;
-    height: 24px;
-    border: 1px solid #121219;
-    cursor: pointer;
-}
-
-.colorInputText {
+.launchButton {
     background-color: transparent;
-    font-size: 16px;
-    color: #fff;
-    width: 75px;
-    border: none;
-    outline: none;
-}
-
-.alignBox {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    border: 1px solid #121219;
-    border-radius: 5px;
-    height: 50px;
-    padding-left: 24px;
-    gap: 15px;
 }

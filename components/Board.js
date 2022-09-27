@@ -1,16 +1,22 @@
 import ItemResizer from "./ItemResizer";
-import styles from "./Board.module.css";
+import styles from "../styles/Board.module.css";
+
+// Redux & Store
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import {
   addElement,
   removeElement,
   updateElement,
+  updateIconElement,
+  updateShapeElement,
+  updateTextElement,
 } from "../store/elementSlice";
 import { resetSelected } from "../store/selectedElementSlice";
-import { FiZap } from "react-icons/fi";
-import Image from "next/image";
 import { setCurrentPage } from "../store/pageSlice";
+import { addBackground } from "../store/backgroundSlice";
+
+// Firebase
 import {
   onChildAdded,
   onChildChanged,
@@ -22,8 +28,8 @@ import {
   onChildRemoved,
 } from "firebase/database";
 import { database } from "../firebaseConfig";
-import { addBackground } from "../store/backgroundSlice";
 
+// It used to easily listen to keyboard events
 function useKey(key, cb) {
   const callbackRef = useRef(cb);
 
@@ -44,24 +50,34 @@ function useKey(key, cb) {
 }
 
 const Board = ({ page }) => {
-  const selected = useSelector((state) => state.selectedElement.id);
-  const background = useSelector((state) => state.background);
-  const roomId = useSelector((state) => state.room.id);
   const board = useRef();
   const dispatch = useDispatch();
-  const [updated, setUpdated] = useState();
-  const elements = useSelector((state) => state.elements);
-  const pageElements = elements.filter((element) => element.page === page);
-  const pageBackground = background.filter((element) => element.page === page);
 
+  const selected = useSelector((state) => state.selectedElement.id); // Gets the selected element
+  const background = useSelector((state) => state.background); // Gets all the backgrounds of the room
+  const roomId = useSelector((state) => state.room.id); // Gets the current Room id
+  const elements = useSelector((state) => state.elements); // Gets all the elements
+
+  const pageElements = elements.filter((element) => element.page === page); // Gets all the elements of the current page
+  const pageBackground = background.filter((bg) => bg.page === page); // Gets the background of the current page
+
+  const [updated, setUpdated] = useState();
+
+  // Fetches the latest elements and background of the room and initialises it in the Redux Store
   useEffect(() => {
     console.log("RANN");
+    if (roomId === undefined || roomId === null || roomId === "") {
+      return;
+    }
     onValue(
-      ref(database, "elements/" + roomId),
+      ref(database, `elements/${roomId}`),
       (snapshot) => {
+        if (!snapshot.exists()) {
+          return;
+        }
+        // Loops through the element list received from the databse and initialises it in Redux
         snapshot.forEach((childSnapshot) => {
           const childValue = childSnapshot.val();
-          console.log(childValue);
           dispatch(addElement(childValue));
         });
       },
@@ -73,9 +89,9 @@ const Board = ({ page }) => {
     onValue(
       ref(database, "background/" + roomId),
       (snapshot) => {
+        // Loops through the background list received from the database and initialises it in Redux
         snapshot.forEach((childSnapshot) => {
           const childValue = childSnapshot.val();
-          console.log(childValue);
           dispatch(addBackground(childValue));
         });
       },
@@ -88,14 +104,14 @@ const Board = ({ page }) => {
   // UPDATE ELEMENT
   useEffect(() => {
     const elementsRef = ref(database, "elements/" + roomId);
+    // Listens to changes in the child elements
     onChildChanged(elementsRef, (snapshot) => {
       const updatedElement = snapshot.val();
-      console.log("UPDATED EL:", updatedElement);
-      console.log("UPDATED EL ID:", updatedElement.id);
       if (!updatedElement.id) {
-        console.log("RETURNED: " + updatedElement.id);
         return;
       }
+
+      // Updates the position and size of the element
       const data = {
         height: updatedElement.height,
         width: updatedElement.width,
@@ -103,15 +119,42 @@ const Board = ({ page }) => {
         y: updatedElement.y,
         id: updatedElement.id,
       };
-      console.log("UPDATED DATA", data, "DATA ID: ", data.id);
       dispatch(updateElement(data));
+
+      // Checks the element type & updates its specific properties
+      if (updatedElement.type === "text") {
+        const newText = {
+          id: updatedElement.id,
+          content: updatedElement.content,
+          color: updatedElement.color,
+          size: updatedElement.size,
+          font: updatedElement.font,
+          weight: updatedElement.weight,
+          align: updatedElement.align,
+        };
+        dispatch(updateTextElement(newText));
+      } else if (updatedElement.type === "shape") {
+        const newShape = {
+          color: updatedElement.color,
+          id: updatedElement.id,
+        };
+        dispatch(updateShapeElement(newShape));
+      } else if (updatedElement.type === "icon") {
+        const newIcon = {
+          color: updatedElement.color,
+          size: updatedElement.size,
+          id: updatedElement.id,
+        };
+        dispatch(updateIconElement(newIcon));
+      }
       setUpdated(data.id);
     });
   }, [roomId, dispatch]);
 
-  // ADD ELEMENT
+  // ADDS NEW ELEMENT & SYNCS ADDITIONS MADE BY MULTIPLE USERS
   useEffect(() => {
     const elementsRef = ref(database, "elements/" + roomId);
+    // Listens to additions in the element list
     onChildAdded(elementsRef, (snapshot) => {
       const dbRef = ref(database);
       get(child(dbRef, `elements/${roomId}/${snapshot.key}`)).then(
@@ -127,9 +170,10 @@ const Board = ({ page }) => {
     });
   }, [roomId, dispatch]);
 
-  // REMOVE ELEMENT
+  // REMOVES ELEMENT & SYNCS IT WITH MULTIPLE USERS
   useEffect(() => {
     const elementsRef = ref(database, "elements/" + roomId);
+    // Listens to any removal in the elements list
     onChildRemoved(elementsRef, (snapshot) => {
       const removedElement = snapshot.val();
       const removedId = removedElement.id;
@@ -139,10 +183,11 @@ const Board = ({ page }) => {
     });
   }, [roomId, dispatch]);
 
-  // UPDATE BACKGROUND
+  // UPDATE BACKGROUND & SYNCS IT WITH MULTIPLE USERS
   useEffect(() => {
-    const elementsRef = ref(database, "background/" + roomId);
-    onChildAdded(elementsRef, (snapshot) => {
+    const bgRef = ref(database, "background/" + roomId);
+    // Listens to additions in the background list
+    onChildChanged(bgRef, (snapshot) => {
       const updatedBackground = snapshot.val();
       if (!updatedBackground.id) {
         return;
@@ -160,15 +205,11 @@ const Board = ({ page }) => {
     });
   }, [roomId, dispatch]);
 
+  // If a user clicks on the board then it unselects the "selected" element
   const selectHandler = (e) => {
     if (e.target !== board.current) {
       return;
     }
-    dispatch(
-      setCurrentPage({
-        current: page,
-      })
-    );
     dispatch(resetSelected());
   };
 
@@ -176,13 +217,21 @@ const Board = ({ page }) => {
     if (e.key !== "Delete") {
       return;
     }
+    // Returns if there no selected element
+    if (!selected) {
+      console.log("No ID to Delete!");
+      return;
+    }
+    const deletedId = selected;
+    console.log("Id to be deleted: ", deletedId);
 
     const dbRef = ref(database);
+    // Finds the element in the element list and removes it using it's ID
     get(child(dbRef, `elements/${roomId}`)).then((snapshot) => {
       if (snapshot.exists()) {
         snapshot.forEach((childSnapshot) => {
           const childValue = childSnapshot.val();
-          if (childValue.id === selected) {
+          if (childValue.id === deletedId) {
             console.log("REMOVED!!", childValue.id);
             remove(ref(database, `elements/${roomId}/${childSnapshot.key}`));
           }
@@ -192,11 +241,13 @@ const Board = ({ page }) => {
       }
     });
 
+    // Removed from Redux
     dispatch(
       removeElement({
-        id: selected,
+        id: deletedId,
       })
     );
+    // No selected element
     dispatch(resetSelected());
   };
 

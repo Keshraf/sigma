@@ -1,33 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [
-  {
-    page: 1,
-    font: "Roboto",
-    weight: 700,
-    size: 24,
-    align: "left",
-    color: "#2599FF",
-    x: 15,
-    y: 15,
-    type: "text",
-    width: 200,
-    height: 100,
-    content: "Nice to Meet You!",
-    roomId: "xyz",
-    id: "lekG3C_g6c-rk3LzZX",
-  },
-  {
-    page: 1,
-    src: "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjIyMTJ8MHwxfHNlYXJjaHw1Mnx8d2FsbHBhcGVyfGVufDB8fHx8MTY2MjYzNjQ2Nw&ixlib=rb-1.2.1&q=80&w=400",
-    width: 200,
-    height: 100,
-    x: 15,
-    y: 15,
-    type: "image",
-    id: "test_image",
-  },
-];
+const initialState = [];
 
 export const elementSlice = createSlice({
   name: "elements",
@@ -36,7 +9,7 @@ export const elementSlice = createSlice({
     addElement(state, action) {
       let same = false;
       console.log("ID", action.payload.id);
-      if (!action.payload.id) {
+      if (!action.payload.id || action.payload.id === undefined) {
         return;
       }
       state.forEach((el) => {
@@ -104,10 +77,45 @@ export const elementSlice = createSlice({
 
       return newState;
     },
+    updateShapeElement(state, action) {
+      const newState = state.map((element) => {
+        if (element.id === action.payload.id) {
+          return {
+            ...element,
+            color: action.payload.color,
+          };
+        } else {
+          return element;
+        }
+      });
+
+      return newState;
+    },
+    updateIconElement(state, action) {
+      const newState = state.map((element) => {
+        if (element.id === action.payload.id) {
+          return {
+            ...element,
+            color: action.payload.color,
+            size: action.payload.size,
+          };
+        } else {
+          return element;
+        }
+      });
+
+      return newState;
+    },
   },
 });
 
-export const { addElement, removeElement, updateElement, updateTextElement } =
-  elementSlice.actions;
+export const {
+  addElement,
+  removeElement,
+  updateElement,
+  updateTextElement,
+  updateShapeElement,
+  updateIconElement,
+} = elementSlice.actions;
 
 export default elementSlice.reducer;

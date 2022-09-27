@@ -1,30 +1,45 @@
+import styles from "../styles/Unsplash.module.css";
+
+// React
 import { useEffect, useState } from "react";
-import { createApi } from "unsplash-js";
-import styles from "./Unsplash.module.css";
+
+// Icons
 import { AiOutlineEnter } from "react-icons/ai";
 import { RiUnsplashFill } from "react-icons/ri";
 import { MdClose } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
+
+// Other Libs
 import { nanoid } from "nanoid";
+import toast from "react-hot-toast";
+import { createApi } from "unsplash-js";
+
+// Redux
+import { useDispatch, useSelector } from "react-redux";
 import { addElement } from "../store/elementSlice";
 import { addBackgroundUnsplash } from "../store/backgroundSlice";
-import toast from "react-hot-toast";
+
+// Firebase
 import { push, set, ref } from "firebase/database";
 import { database } from "../firebaseConfig";
 
 const Unsplash = ({ setUnsplashOpen, type }) => {
-  const [photos, setPhotos] = useState([]);
-  const [query, setQuery] = useState("wallpaper");
+  const [photos, setPhotos] = useState([]); // Stores the fetched pictures
+  const [query, setQuery] = useState("wallpaper"); // Sets the search parameter for Unsplash
+
   const dispatch = useDispatch();
-  const page = useSelector((state) => state.page.current);
-  const roomId = useSelector((state) => state.room.id);
+
+  const page = useSelector((state) => state.page.current); // Gets the current page
+  const roomId = useSelector((state) => state.room.id); // Gets the current room Id
+
+  // Creates the API & fetches Pictures and stores them in photos
   useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_UNSPLASH_API);
     const unsplash = createApi({
-      accessKey: "hADNzo74JDzJ8wK5fZjtzVGQVSaCzjCKFokw9TTQLQ4",
+      accessKey: process.env.NEXT_PUBLIC_UNSPLASH_API,
     });
 
     unsplash.search
-      .getPhotos({ page: 2, perPage: 30, query: query })
+      .getPhotos({ page: 1, perPage: 30, query: query })
       .then((data) => {
         setPhotos(data.response.results);
       });
@@ -50,6 +65,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
   };
 
   const imageSelectHandler = (e) => {
+    // Checks whether it is an image element or a background
     if (type === "image") {
       const src = e.target.currentSrc;
       const data = {
@@ -75,6 +91,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
         background: src,
         page,
         roomId,
+        source: "unsplash",
       };
       dispatch(addBackgroundUnsplash(data));
 

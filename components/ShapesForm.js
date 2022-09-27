@@ -1,128 +1,108 @@
+import styles from "../styles/ShapesForm.module.css";
+
+// Other libs
 import { nanoid } from "nanoid";
-import { useState } from "react";
 import toast from "react-hot-toast";
+
+// React & Redux
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addElement } from "../store/elementSlice";
-import styles from "./ShapesForm.module.css";
+import { addElement, updateShapeElement } from "../store/elementSlice";
+
+// Firebase
 import { push, set, ref } from "firebase/database";
 import { database } from "../firebaseConfig";
 
+// Custom Hook
+import useElementUpdate from "../hooks/useElementUpdate";
+
+// Components
+import ColorPicker from "./ColorPicker";
+
 const ShapesForm = () => {
+  const dispatch = useDispatch();
+  const elementUpdater = useElementUpdate();
+
   const [shapeSelected, setShapeSelected] = useState(null);
   const [color, setColor] = useState("#FFFFFF");
-  const dispatch = useDispatch();
-  const page = useSelector((state) => state.page.current);
-  const roomId = useSelector((state) => state.room.id);
 
-  const colorBlurHandler = (e) => {
-    const value = e.target.value;
-    const x = "#123456";
-    if (value.length < 7) {
-      toast.error("Invalid Color Input");
+  const page = useSelector((state) => state.page.current); // gets the current page
+  const roomId = useSelector((state) => state.room.id); // gets the current room id
+  const selected = useSelector((state) => state.selectedElement); // Gets the selected Element
+
+  useEffect(() => {
+    if (isShape) {
+      setColor(selected.color);
+    } else {
       setColor("#FFFFFF");
-      return;
     }
-    if (!value.startsWith("#")) {
-      toast.error(`Add '#' to your Color Input`);
-      setColor("#FFFFFF");
-      return;
-    }
-  };
+  }, [isShape, selected.color]);
 
   const submitHandler = () => {
-    if (shapeSelected === null) {
-      return;
+    console.log("Entered", selected);
+    if (isShape) {
+      const data = {
+        color,
+        id: selected.id,
+      };
+      dispatch(updateShapeElement(data));
+      elementUpdater(data);
+      toast.success(`${shapeSelected} color changed!`);
+    } else {
+      if (shapeSelected === null) {
+        return;
+      }
+      const data = {
+        id: nanoid(),
+        x: 15,
+        y: 15,
+        width: 100,
+        height: 100,
+        type: "shape",
+        shape: shapeSelected,
+        color,
+        page,
+        roomId,
+      };
+      dispatch(addElement(data));
+      const elementRef = ref(database, "elements/" + roomId);
+      set(push(elementRef), data);
+      toast.success(`${shapeSelected} added!`);
     }
-    const data = {
-      id: nanoid(),
-      x: 15,
-      y: 15,
-      width: 100,
-      height: 100,
-      type: "shape",
-      shape: shapeSelected,
-      color,
-      page,
-      roomId,
-    };
-    dispatch(addElement(data));
-    const elementRef = ref(database, "elements/" + roomId);
-    set(push(elementRef), data);
-    toast.success(`${shapeSelected} added!`);
   };
+
+  // Different types of shapes
+  const shapes = ["square", "circle", "line", "triangle"];
+  const isShape = selected.type === "shape";
 
   return (
     <div className={styles.formLayout}>
-      <div className={styles.shapesLayout}>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("square")}
-          style={{
-            borderColor: shapeSelected === "square" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div
-            className={styles.square}
-            style={{ backgroundColor: color }}
-          ></div>
+      {!isShape && (
+        <div className={styles.shapesLayout}>
+          {shapes.map((shape) => {
+            return (
+              <div
+                className={styles.shapesContainer}
+                onClick={() => setShapeSelected(shape)}
+                style={{
+                  borderColor: shapeSelected === shape ? "#2599FF" : "#171720",
+                }}
+                key={shape}
+              >
+                <div
+                  className={styles[shape]}
+                  style={{ backgroundColor: color }}
+                ></div>
+              </div>
+            );
+          })}
         </div>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("circle")}
-          style={{
-            borderColor: shapeSelected === "circle" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div
-            className={styles.circle}
-            style={{ backgroundColor: color }}
-          ></div>
-        </div>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("line")}
-          style={{
-            borderColor: shapeSelected === "line" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div className={styles.line} style={{ backgroundColor: color }}></div>
-        </div>
-        <div
-          className={styles.shapesContainer}
-          onClick={() => setShapeSelected("triangle")}
-          style={{
-            borderColor: shapeSelected === "triangle" ? "#2599FF" : "#171720",
-          }}
-        >
-          <div
-            className={styles.triangle}
-            style={{ backgroundColor: color }}
-          ></div>
-        </div>
-      </div>
-      <div className={styles.alignBox}>
-        <label
-          htmlFor="color"
-          className={styles.colorLabel}
-          style={{ backgroundColor: color }}
-        ></label>
-        <input
-          id="color"
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          style={{ display: "none", backgroundColor: color }}
-        />
-        <input
-          type="text"
-          value={color.toUpperCase()}
-          onBlur={colorBlurHandler}
-          onChange={(e) => setColor(e.target.value)}
-          className={styles.colorInputText}
-        ></input>
-      </div>
+      )}
+      <ColorPicker color={color} setColor={setColor} />
       <button className={styles.submitButton} onClick={submitHandler}>
-        Insert
+        {isShape
+          ? "Change Color"
+          : `Insert ${shapeSelected === null ? "" : shapeSelected}`}
       </button>
     </div>
   );

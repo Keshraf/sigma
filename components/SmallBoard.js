@@ -1,15 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentPage } from "../store/pageSlice";
-import styles from "./SmallBoard.module.css";
+import { FiTrash2 } from "react-icons/fi";
+import styles from "../styles/SmallBoard.module.css";
 
 const SmallBoard = ({ page }) => {
   const dispatch = useDispatch();
   const background = useSelector((state) => state.background);
   const current = useSelector((state) => state.page.current);
-  const pageBackground = background.filter((element) => element.page === page);
+  const pageBackground = background.filter((bg) => bg.page === page);
   const latestBackground = pageBackground[pageBackground.length - 1];
 
-  const selectHandler = (e) => {
+  const selectHandler = () => {
     dispatch(
       setCurrentPage({
         current: page,
@@ -27,7 +28,12 @@ const SmallBoard = ({ page }) => {
       }}
       className={styles.board}
       onClick={selectHandler}
-    ></div>
+    >
+      {/* <div className={styles.page}>{current}</div>
+      <div className={styles.trash}>
+        <FiTrash2 />
+      </div> */}
+    </div>
   );
 };
 
