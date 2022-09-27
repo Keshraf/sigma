@@ -185,9 +185,9 @@ const Board = ({ page }) => {
 
   // UPDATE BACKGROUND & SYNCS IT WITH MULTIPLE USERS
   useEffect(() => {
-    const elementsRef = ref(database, "background/" + roomId);
+    const bgRef = ref(database, "background/" + roomId);
     // Listens to additions in the background list
-    onChildAdded(elementsRef, (snapshot) => {
+    onChildChanged(bgRef, (snapshot) => {
       const updatedBackground = snapshot.val();
       if (!updatedBackground.id) {
         return;
