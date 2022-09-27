@@ -13,10 +13,6 @@ import { setSelectedElement } from "../store/selectedElementSlice";
 // Feather Icons
 import * as FeatherIcons from "react-icons/fi";
 
-// Firebase
-import { child, get, ref, update } from "firebase/database";
-import { database } from "../firebaseConfig";
-
 // Custom Hook
 import useElementUpdate from "../hooks/useElementUpdate";
 
@@ -25,7 +21,6 @@ const ItemResizer = ({ info, disable, updated }) => {
   const elementUpdater = useElementUpdate();
 
   const selectedId = useSelector((state) => state.selectedElement.id); // ID of the selected element
-  const roomId = useSelector((state) => state.room.id); // Current Room Id
 
   let selected = false;
   if (selectedId === info.id) {
@@ -62,9 +57,13 @@ const ItemResizer = ({ info, disable, updated }) => {
     if (info.loaded) {
       return;
     }
-    console.log("LOADED!: " + info.loaded);
+    console.log("NOT LOADED!: " + info);
     const naturalHeight = e.target.naturalHeight;
     const naturalWidth = e.target.naturalWidth;
+
+    if (info.height < 500 && info.width < 800) {
+      return;
+    }
 
     // Proportionately reduces the size of the image to fit inside the board
     if (naturalHeight > 500) {
@@ -82,9 +81,8 @@ const ItemResizer = ({ info, disable, updated }) => {
       height: naturalHeight,
       x: x.get(),
       y: y.get(),
-      loaded: true,
     };
-    console.log(newData);
+
     // Updates the image data with new size
     dispatch(updateElement(newData));
     api.set({
@@ -110,7 +108,6 @@ const ItemResizer = ({ info, disable, updated }) => {
         );
       }
       if (!state.dragging) {
-        console.log(state.dragging);
         const data = {
           height: height.get(),
           width: width.get(),
@@ -236,6 +233,7 @@ const ItemResizer = ({ info, disable, updated }) => {
       </div>
     );
   } else if (info?.type === "shape") {
+    // Sets the element according to their shape type
     if (info.shape === "square") {
       element = (
         <div

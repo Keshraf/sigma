@@ -164,7 +164,7 @@ const Edit = () => {
   // Downloads the Current Page
   const downloadHandler = useCallback(async () => {
     const board = document.querySelector("#board");
-    console.log(board.setAttribute());
+
     const canvas = await html2canvas(board, {
       useCORS: true,
       allowTaint: true,
