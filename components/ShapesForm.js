@@ -71,6 +71,7 @@ const ShapesForm = () => {
     }
   };
 
+  // Different types of shapes
   const shapes = ["square", "circle", "line", "triangle"];
   const isShape = selected.type === "shape";
 

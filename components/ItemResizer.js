@@ -1,30 +1,41 @@
-import { useDrag, useGesture } from "@use-gesture/react";
-import { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import styles from "../styles/ItemResizer.module.css";
+
+// Animation Library
+import { useDrag } from "@use-gesture/react";
 import { animated, useSpring } from "react-spring";
+
+// React & Redux
+import { useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { updateElement } from "../store/elementSlice";
 import { setSelectedElement } from "../store/selectedElementSlice";
-import styles from "../styles/ItemResizer.module.css";
-import * as FeatherIcons from "react-icons/fi";
-import { child, get, onValue, ref, update } from "firebase/database";
-import { database } from "../firebaseConfig";
-import { useEffect } from "react";
-import { useCallback } from "react";
-import { useMemo } from "react";
 
-const ItemResizer = ({ info, disable, updated, children }) => {
+// Feather Icons
+import * as FeatherIcons from "react-icons/fi";
+
+// Firebase
+import { child, get, ref, update } from "firebase/database";
+import { database } from "../firebaseConfig";
+
+// Custom Hook
+import useElementUpdate from "../hooks/useElementUpdate";
+
+const ItemResizer = ({ info, disable, updated }) => {
   const dispatch = useDispatch();
-  const selectedId = useSelector((state) => state.selectedElement.id);
-  const roomId = useSelector((state) => state.room.id);
+  const elementUpdater = useElementUpdate();
+
+  const selectedId = useSelector((state) => state.selectedElement.id); // ID of the selected element
+  const roomId = useSelector((state) => state.room.id); // Current Room Id
+
   let selected = false;
   if (selectedId === info.id) {
     selected = true;
   }
 
-  const imgRef = useRef(null);
-  const textRef = useRef(null);
-
+  // Reference to the corner-piece which increases the size of the element
   const dragElRef = useRef(null);
+
+  // Sets the initial size & position of an element
   const [{ x, y, width, height }, api] = useSpring(() => ({
     x: info ? info.x : 0,
     y: info ? info.y : 0,
@@ -32,6 +43,7 @@ const ItemResizer = ({ info, disable, updated, children }) => {
     height: info ? info.height : 100,
   }));
 
+  // Updates the size of an element that has been changed
   useEffect(() => {
     if (!updated) {
       return;
@@ -44,32 +56,9 @@ const ItemResizer = ({ info, disable, updated, children }) => {
     });
   }, [updated, api, info]);
 
-  const elementUpdate = useCallback(() => {
-    console.log("USE CALLBACK CALLED!");
-
-    const dbRef = ref(database);
-    get(child(dbRef, `elements/${roomId}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-        snapshot.forEach((childSnapshot) => {
-          const childValue = childSnapshot.val();
-          if (childValue.id === info.id) {
-            console.log(childValue);
-            update(ref(database, `elements/${roomId}/${childSnapshot.key}`), {
-              height: height.get(),
-              width: width.get(),
-              x: x.get(),
-              y: y.get(),
-            });
-          }
-        });
-      } else {
-        console.log("No data available");
-      }
-    });
-  }, [roomId, info.id, height, width, x, y]);
-
+  // Changes the size of the image before loading to fit the board
   const imageLoadHandler = (e) => {
+    // Checks if the image has been loaded before
     if (info.loaded) {
       return;
     }
@@ -77,6 +66,7 @@ const ItemResizer = ({ info, disable, updated, children }) => {
     const naturalHeight = e.target.naturalHeight;
     const naturalWidth = e.target.naturalWidth;
 
+    // Proportionately reduces the size of the image to fit inside the board
     if (naturalHeight > 500) {
       naturalWidth = naturalWidth * (500 / naturalHeight);
       naturalHeight = 500;
@@ -92,36 +82,20 @@ const ItemResizer = ({ info, disable, updated, children }) => {
       height: naturalHeight,
       x: x.get(),
       y: y.get(),
+      loaded: true,
     };
     console.log(newData);
+    // Updates the image data with new size
     dispatch(updateElement(newData));
     api.set({
       width: naturalWidth,
       height: naturalHeight,
     });
 
-    const dbRef = ref(database);
-    get(child(dbRef, `elements/${roomId}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-        snapshot.forEach((childSnapshot) => {
-          const childValue = childSnapshot.val();
-          if (childValue.id === info.id) {
-            console.log(childValue);
-            update(ref(database, `elements/${roomId}/${childSnapshot.key}`), {
-              height: height.get(),
-              width: width.get(),
-              x: x.get(),
-              y: y.get(),
-              loaded: true,
-            });
-          }
-        });
-      } else {
-        console.log("No data available");
-      }
-    });
+    elementUpdater(newData);
   };
+
+  // Uses use-gesture to update the element size and position according to user interaction
   const bind = useDrag(
     (state) => {
       if (disable) {
@@ -137,10 +111,17 @@ const ItemResizer = ({ info, disable, updated, children }) => {
       }
       if (!state.dragging) {
         console.log(state.dragging);
-        elementUpdate();
+        const data = {
+          height: height.get(),
+          width: width.get(),
+          x: x.get(),
+          y: y.get(),
+        };
+        elementUpdater(data);
         return;
       }
 
+      // Checks whether the element is being resized instead of being dragged
       const Resizing = state.event.target === dragElRef.current;
 
       if (Resizing) {
@@ -195,6 +176,7 @@ const ItemResizer = ({ info, disable, updated, children }) => {
   );
 
   let element;
+  // Sets the property of each element according to element type
   if (info?.type === "text") {
     let flex = "center";
     if (info.align === "left") {
@@ -218,7 +200,6 @@ const ItemResizer = ({ info, disable, updated, children }) => {
           justifyContent: flex,
           alignItems: "center",
         }}
-        ref={textRef}
       >
         {info.content}
       </p>
@@ -237,7 +218,6 @@ const ItemResizer = ({ info, disable, updated, children }) => {
         }}
         draggable={false}
         onLoad={imageLoadHandler}
-        ref={imgRef}
       />
     );
   } else if (info?.type === "icon") {
@@ -303,7 +283,7 @@ const ItemResizer = ({ info, disable, updated, children }) => {
       }}
       {...bind()}
     >
-      {info ? element : children}
+      {element}
       <div
         className={styles.resizer}
         ref={dragElRef}

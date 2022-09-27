@@ -75,6 +75,7 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
         background: src,
         page,
         roomId,
+        source: "unsplash",
       };
       dispatch(addBackgroundUnsplash(data));
 

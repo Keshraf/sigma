@@ -7,7 +7,7 @@ const SmallBoard = ({ page }) => {
   const dispatch = useDispatch();
   const background = useSelector((state) => state.background);
   const current = useSelector((state) => state.page.current);
-  const pageBackground = background.filter((element) => element.page === page);
+  const pageBackground = background.filter((bg) => bg.page === page);
   const latestBackground = pageBackground[pageBackground.length - 1];
 
   const selectHandler = () => {

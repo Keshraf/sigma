@@ -6,6 +6,7 @@ import styles from "../styles/CodeModal.module.css";
 const CodeModal = ({ setModalOpen }) => {
   const router = useRouter();
 
+  // Attaches the text to the clipboard
   const copyHandler = () => {
     navigator.clipboard.writeText(router.query.q);
     toast.success("Copied to Clipboard!");

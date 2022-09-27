@@ -12,6 +12,7 @@ const Icons = ({ setIconsOpen, setName }) => {
   const values = Object.values(FeatherIcons);
 
   const addIconHandler = (e) => {
+    // Gets the name of the icon that was passed to the attribute name while rendering the icon
     const name = e.currentTarget.attributes.name.value;
     setName(name);
   };

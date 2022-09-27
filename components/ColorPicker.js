@@ -3,7 +3,7 @@ import styles from "../styles/ColorPicker.module.css";
 import { toast } from "react-hot-toast";
 
 const ColorPicker = ({ color, setColor }) => {
-  // Sets Color and Warns on wrong input
+  // Sets Color and Warns on & Resets wrong input
   const colorBlurHandler = (e) => {
     const value = e.target.value;
     if (value.length < 7) {
