@@ -15,14 +15,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetSelected } from "../store/selectedElementSlice";
 import { addPage, setPage } from "../store/pageSlice";
 import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
+import { addBackgroundColor } from "../store/backgroundSlice";
 
 // Firebase
-import { child, get, onChildChanged, ref, update } from "firebase/database";
+import {
+  child,
+  get,
+  onChildChanged,
+  ref,
+  update,
+  set,
+} from "firebase/database";
 import { database } from "../firebaseConfig";
 
 // Other Libraries
 import { Toaster } from "react-hot-toast";
 import html2canvas from "html2canvas";
+import { nanoid } from "nanoid";
 
 //Components
 import Board from "../components/Board";
@@ -125,6 +134,7 @@ const Edit = () => {
   }, [router.query.q, dispatch, room.pages, page.pages.length]);
 
   // Adds and syncs new pages across all users of the same room
+  // Sets the Background of the New Page to white (#FFFFFF)
   const addPageHandler = () => {
     console.log("ADD PAGE RAN!");
     console.log(room);
@@ -135,6 +145,20 @@ const Edit = () => {
     update(ref(database, `rooms/${roomId.id}`), {
       pages: latestPages,
     });
+    const data = {
+      id: nanoid(),
+      page: latestPages,
+      background: "#FFFFFF",
+      roomId: roomId.id,
+      source: "color",
+    };
+
+    dispatch(addBackgroundColor(data));
+    const backgroundRef = ref(
+      database,
+      `background/${roomId.id}/${latestPages}`
+    );
+    set(backgroundRef, data);
   };
 
   // Downloads the Current Page
