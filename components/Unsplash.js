@@ -33,7 +33,6 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
 
   // Creates the API & fetches Pictures and stores them in photos
   useEffect(() => {
-    console.log(process.env.NEXT_PUBLIC_UNSPLASH_API);
     const unsplash = createApi({
       accessKey: process.env.NEXT_PUBLIC_UNSPLASH_API,
     });
@@ -104,7 +103,9 @@ const Unsplash = ({ setUnsplashOpen, type }) => {
   };
 
   return (
-    <div className={styles.container} onClick={() => setUnsplashOpen(false)}>
+    <div
+      className={styles.container} /* onClick={() => setUnsplashOpen(false)} */
+    >
       <div className={styles.actionContainer}>
         <div className={styles.icon} onClick={() => setUnsplashOpen(false)}>
           <MdClose style={{ fontSize: "18px" }} />

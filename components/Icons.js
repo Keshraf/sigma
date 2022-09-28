@@ -18,7 +18,7 @@ const Icons = ({ setIconsOpen, setName }) => {
   };
 
   return (
-    <div className={styles.container} onClick={() => setIconsOpen(false)}>
+    <div className={styles.container} /* onClick={() => setIconsOpen(false)} */>
       <div className={styles.actionContainer}>
         <div className={styles.actionIcon} onClick={() => setIconsOpen(false)}>
           <MdClose style={{ fontSize: "18px" }} />

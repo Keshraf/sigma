@@ -11,6 +11,7 @@
     flex-wrap: wrap;
     gap: 10px;
     justify-content: space-between;
+    margin-bottom: 15px;
 }
 
 .shapesContainer {

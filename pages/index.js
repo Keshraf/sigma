@@ -8,21 +8,26 @@ import { nanoid } from "nanoid";
 import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
-  const [roomId, setRoomId] = useState();
+  const [roomId, setRoomId] = useState("");
+  const [username, setUsername] = useState("");
   const [activeForm, setActiveForm] = useState(true);
   const router = useRouter();
 
   // Generates a new Room for the User
   const generateRoom = (e) => {
     e.preventDefault();
-    console.log(e.target[0].value);
+    if (!username) {
+      toast.error("Please enter an username");
+      return;
+    }
     //Creates a room Id
     const room = nanoid();
     // Adds the user as the admin of the room
     set(ref(database, "rooms/" + room), {
-      admin: e.target[0].value,
+      admin: username,
       pages: 1,
     });
 
@@ -32,11 +37,15 @@ export default function Home() {
   // Checks whether the room exists and navigates the user to that room
   const joinRoom = (e) => {
     e.preventDefault();
+    const toastId = toast.loading("Waiting...");
     get(child(ref(database), `rooms/${roomId}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           router.push(`/edit?q=${roomId}`);
         } else {
+          toast.error("Invalid Room Id", {
+            id: toastId,
+          });
           console.log("ERROR!");
         }
       })
@@ -55,6 +64,16 @@ export default function Home() {
         />
         <link rel="icon" href="/images/Sigma Logo.png" />
       </Head>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: "#303544",
+            color: "#ffffff",
+          },
+        }}
+      />
       <nav className={styles.nav}>
         <div className={styles.logo}>
           <Image
@@ -88,6 +107,8 @@ export default function Home() {
             id="username"
             className={styles.input}
             placeholder="Create a username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           ></input>
           <button type="submit" className={styles.submit}>
             Generate Room
