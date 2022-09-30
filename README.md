@@ -29,10 +29,12 @@ It is made to simplify making custom designs. It has in-built features which all
 - Real-time Collaboration
 - Can add Multiple Pages to their design
 - Can download pages as images
+- Synchronised Element Updates (like color, etc.)
+- Authentication
+- Can Save Projects
 
 🛠 In Progress:
 
-- Synchronised Element Updates (like color, etc.)
 - Deleting Pages
 - Adding Patterns
 
@@ -48,6 +50,7 @@ It is made to simplify making custom designs. It has in-built features which all
 # Tech Stack
 
 - NextJS
+- AWS Amplify
 - Firebase
 - Redux Toolkit
 - use-gesture
