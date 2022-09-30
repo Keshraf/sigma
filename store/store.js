@@ -4,6 +4,7 @@ import selectedElementReducer from "./selectedElementSlice";
 import backgroundReducer from "./backgroundSlice";
 import pageReducer from "./pageSlice";
 import roomReducer from "./roomSlice";
+import userReducer from "./userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     background: backgroundReducer,
     page: pageReducer,
     room: roomReducer,
+    user: userReducer,
   },
 });

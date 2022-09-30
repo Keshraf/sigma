@@ -214,7 +214,7 @@ const TextForm = () => {
             className={styles.alignDiv}
             style={{
               backgroundColor: `${
-                align === "left" ? "#121219" : "transparent"
+                align === "left" ? "#303544" : "transparent"
               }`,
             }}
             onClick={(e) => setAlign("left")}
@@ -225,7 +225,7 @@ const TextForm = () => {
             className={styles.alignDiv}
             style={{
               backgroundColor: `${
-                align === "center" ? "#121219" : "transparent"
+                align === "center" ? "#303544" : "transparent"
               }`,
             }}
             onClick={(e) => setAlign("center")}
@@ -237,7 +237,7 @@ const TextForm = () => {
             className={styles.alignDiv}
             style={{
               backgroundColor: `${
-                align === "right" ? "#121219" : "transparent"
+                align === "right" ? "#303544" : "transparent"
               }`,
             }}
             onClick={(e) => setAlign("right")}

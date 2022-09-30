@@ -66,6 +66,9 @@ export const backgroundSlice = createSlice({
       removedArr.push(newState);
       return removedArr;
     },
+    resetBackground(state) {
+      return [];
+    },
   },
 });
 
@@ -74,5 +77,6 @@ export const {
   addBackgroundFirebase,
   addBackgroundUnsplash,
   addBackground,
+  resetBackground,
 } = backgroundSlice.actions;
 export default backgroundSlice.reducer;

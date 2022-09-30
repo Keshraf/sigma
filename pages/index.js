@@ -1,38 +1,38 @@
 import styles from "../styles/Home.module.css";
+
+// Next
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
+
+// Firebase
 import { database } from "../firebaseConfig";
-import { set, ref, get, child } from "firebase/database";
-import { nanoid } from "nanoid";
-import { useState } from "react";
+import { ref, get, child } from "firebase/database";
+
+// React Redxu
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { resetUser } from "../store/userSlice";
+
+// Icons
 import { FaGithub } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
+
+// Other libs
 import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
-  const [roomId, setRoomId] = useState("");
-  const [username, setUsername] = useState("");
-  const [activeForm, setActiveForm] = useState(true);
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  // Generates a new Room for the User
-  const generateRoom = (e) => {
-    e.preventDefault();
-    if (!username) {
-      toast.error("Please enter an username");
-      return;
-    }
-    //Creates a room Id
-    const room = nanoid();
-    // Adds the user as the admin of the room
-    set(ref(database, "rooms/" + room), {
-      admin: username,
-      pages: 1,
-    });
+  const [roomId, setRoomId] = useState(""); // Stores the entered room id
+  const [activeForm, setActiveForm] = useState(true); // Switches between forms
 
-    router.push(`/edit?q=${room}`);
-  };
+  useEffect(() => {
+    // Resets user or logouts user
+    dispatch(resetUser());
+  }, [dispatch]);
 
   // Checks whether the room exists and navigates the user to that room
   const joinRoom = (e) => {
@@ -101,19 +101,11 @@ export default function Home() {
         supafast! ⚡
       </h2>
       {activeForm ? (
-        <form onSubmit={generateRoom} className={styles.form}>
-          <input
-            type="text"
-            id="username"
-            className={styles.input}
-            placeholder="Create a username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          ></input>
+        <Link href="/auth">
           <button type="submit" className={styles.submit}>
-            Generate Room
+            Sign Up
           </button>
-        </form>
+        </Link>
       ) : (
         <form onSubmit={joinRoom} className={styles.form}>
           <input
