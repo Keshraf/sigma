@@ -21,7 +21,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
-    border-radius: 10px;
+    border-radius: 15px;
     z-index: 1;
 }
 
@@ -33,6 +33,16 @@
     margin: 0px;
     z-index: 1;
 }
+.header{
+    width: 725px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0px;
+    z-index: 1;
+}
 
 .search {
     width: 100%;
@@ -41,10 +51,11 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
 }
 
 .searchBar{
-    width: 78%;
+    width: auto;
     height: 50px;
     border: 1px solid #374860;
     border-radius: 5px;
@@ -53,10 +64,26 @@
     color: #fff;
     font-family: 'Poppins';
     font-size: 16px;
+    flex: 1;
 }
 
 .searchBar::placeholder{
     color: #303544;
+}
+
+.logout{
+    width: 60px;
+    height: 60px;
+    border-radius: 100px;
+    background-color: #1717205d;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.logout:hover{
+    background-color: #1717209c;
+    border: 1px solid rgba(255, 255, 255, 0.089);
 }
 
 .submit{
@@ -76,6 +103,30 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  flex: 0.3;
+  }
+
+.cancel{
+    width: 20%;
+  height: 50px;
+  background: transparent;
+  border-radius: 5px;
+  font-family: 'Poppins';
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
+  color: #FFFFFF;
+  border: 1px solid #20222D;
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: 0.3;
+  }
+  .cancel:hover{
+    background-color: #20222D;
   }
 
 .folderBox {
@@ -87,10 +138,11 @@
     align-items: center;
     gap: 10px;
     color: #FFF;
+    cursor: pointer;
 }
 
 .folderBox:hover{
-    background: rgba(37, 153, 255, 0.05);
+    background: rgba(37, 153, 255, 0.212);
 border: 1px solid #2599FF;
 border-radius: 5px;
 }
@@ -105,15 +157,29 @@ border-radius: 5px;
     white-space: nowrap;
     text-overflow:clip;
     width: 90px;
+    user-select: none;
 }
 
 .folderContainer{
     width: 100%;
     height: auto;
+    min-height: 350px;
     overflow-y: auto;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.empty{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .blur{

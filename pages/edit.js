@@ -6,15 +6,23 @@ import { TbSquaresFilled, TbTextResize, TbLayoutGridAdd } from "react-icons/tb";
 import { IoMdImage } from "react-icons/io";
 import { AiOutlineUserAdd, AiOutlinePlus } from "react-icons/ai";
 import { FaShapes } from "react-icons/fa";
-import { FiDownload } from "react-icons/fi";
+import { FiDownload, FiLogIn } from "react-icons/fi";
+import { RiFolder3Fill } from "react-icons/ri";
 
 // React, Next & Redux
 import { useRouter } from "next/router";
+import Link from "next/link";
+import Head from "next/head";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetSelected } from "../store/selectedElementSlice";
 import { addPage, setPage } from "../store/pageSlice";
-import { addPageRoom, setPageRoom, setRoom } from "../store/roomSlice";
+import {
+  addPageRoom,
+  setPageRoom,
+  setRoom,
+  setRoomName,
+} from "../store/roomSlice";
 import { addBackgroundColor } from "../store/backgroundSlice";
 
 // Firebase
@@ -29,7 +37,7 @@ import {
 import { database } from "../firebaseConfig";
 
 // Other Libraries
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import html2canvas from "html2canvas";
 import { nanoid } from "nanoid";
 
@@ -57,6 +65,7 @@ const Edit = () => {
   const selectedElement = useSelector((state) => state.selectedElement); // Current Selected Element By the User
   const page = useSelector((state) => state.page); // Active Page and List of Pages
   const room = useSelector((state) => state.room); // Current Room info
+  const user = useSelector((state) => state.user.user); // Current Logged in user
 
   const navChangeHandler = useCallback(
     (element, id) => {
@@ -71,6 +80,10 @@ const Edit = () => {
   );
 
   useEffect(() => {
+    toast("Please Zoom Out on Screen Distortion", {
+      icon: "🛠",
+      duration: 4000,
+    });
     console.log(router.query.q);
     // Sets the current room id
     dispatch(
@@ -81,10 +94,11 @@ const Edit = () => {
 
     // Sets the total number of pages of that particular room
     const dbRef = ref(database);
-    get(child(dbRef, `rooms/${router.query.q}/pages`)).then((snapshot) => {
+    get(child(dbRef, `rooms/${router.query.q}`)).then((snapshot) => {
       if (snapshot.exists()) {
-        console.log("PAGES!", snapshot.val());
-        const numberOfPages = snapshot.val();
+        console.log("PAGES!", snapshot.val().pages);
+        const numberOfPages = snapshot.val().pages;
+        const roomName = snapshot.val().name;
         dispatch(
           setPageRoom({
             pages: numberOfPages,
@@ -93,6 +107,11 @@ const Edit = () => {
         dispatch(
           setPage({
             pages: numberOfPages,
+          })
+        );
+        dispatch(
+          setRoomName({
+            name: roomName,
           })
         );
       }
@@ -240,6 +259,10 @@ const Edit = () => {
 
   return (
     <>
+      <Head>
+        <title>{room.name}</title>
+        <link rel="icon" href="/images/Sigma Logo.png" />
+      </Head>
       <Toaster
         position="top-center"
         toastOptions={{
@@ -260,11 +283,7 @@ const Edit = () => {
         )}
         {modalOpen && <CodeModal setModalOpen={setModalOpen} />}
         <nav className={styles.nav}>
-          <input
-            type="text"
-            placeholder="File Name"
-            className={styles.inputShaded}
-          ></input>
+          <div className={styles.fileName}>{room.name}</div>
           {/* Goes through the nav buttons array and creates a button for each */}
           {navButtonsList.map((nav) => {
             return (
@@ -291,15 +310,8 @@ const Edit = () => {
         <section className={styles.workspace}>
           <div className={styles.alignSpace}>
             <div className={styles.action}>
-              <p className={styles.page}>#{page.current}</p>
               <div className={styles.actionButtons}>
-                <button
-                  className={styles.actionButton}
-                  onClick={() => setModalOpen(true)}
-                >
-                  <AiOutlineUserAdd style={{ fontSize: "24px" }} />
-                  Invite
-                </button>
+                <p className={styles.page}>#{page.current}</p>
                 <button
                   className={styles.actionButton}
                   onClick={addPageHandler}
@@ -307,7 +319,33 @@ const Edit = () => {
                   <AiOutlinePlus style={{ fontSize: "24px" }} />
                   Page
                 </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => setModalOpen(true)}
+                >
+                  <AiOutlineUserAdd style={{ fontSize: "24px" }} />
+                  Invite
+                </button>
               </div>
+              {user ? (
+                <div className={styles.actionButtons}>
+                  <Link href="/files">
+                    <button className={styles.actionButton2}>
+                      <RiFolder3Fill style={{ fontSize: "24px" }} />
+                      Folder
+                    </button>
+                  </Link>
+                </div>
+              ) : (
+                <div className={styles.actionButtons}>
+                  <Link href="/auth">
+                    <button className={styles.actionButton2}>
+                      <FiLogIn style={{ fontSize: "24px" }} />
+                      Sign Up
+                    </button>
+                  </Link>
+                </div>
+              )}
             </div>
             <Board page={page.current} id="board" />
             <div className={styles.pages}>
