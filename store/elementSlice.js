@@ -106,6 +106,9 @@ export const elementSlice = createSlice({
 
       return newState;
     },
+    resetElement(state) {
+      return [];
+    },
   },
 });
 
@@ -116,6 +119,7 @@ export const {
   updateTextElement,
   updateShapeElement,
   updateIconElement,
+  resetElement,
 } = elementSlice.actions;
 
 export default elementSlice.reducer;
