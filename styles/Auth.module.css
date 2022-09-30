@@ -85,6 +85,13 @@
     text-decoration: underline #1DAACC;
   }
 
+  .rule{
+    font-family: 'Poppins';
+    margin: 0;
+    font-size: 10px;
+    color: #1da9cc85;
+  }
+
   .blur{
     width: 2500px;
     height: 2500px;
