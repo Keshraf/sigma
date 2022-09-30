@@ -13,7 +13,7 @@
 
 It is made to simplify making custom designs. It has in-built features which allow users to access beatiful designs assets from a single web application.
 
-![Preview With Background](https://user-images.githubusercontent.com/82109991/190912912-3bf83265-741c-4e7c-a3e1-5273a3f013c6.png)
+![Preview With Background](https://user-images.githubusercontent.com/82109991/193294707-e6cf3234-dae3-4453-a388-d35e39eb1351.png)
 
 # Features
 
