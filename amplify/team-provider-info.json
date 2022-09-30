@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-sigma-dev-193652-authRole",
+      "UnauthRoleArn": "arn:aws:iam::742859811898:role/amplify-sigma-dev-193652-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::742859811898:role/amplify-sigma-dev-193652-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-sigma-dev-193652-deployment",
+      "UnauthRoleName": "amplify-sigma-dev-193652-unauthRole",
+      "StackName": "amplify-sigma-dev-193652",
+      "StackId": "arn:aws:cloudformation:us-west-2:742859811898:stack/amplify-sigma-dev-193652/f8d21000-3fff-11ed-ab66-0afb0b50396d",
+      "AmplifyAppId": "d20ev0puquaogc"
+    },
+    "categories": {
+      "auth": {
+        "sigma517eb24f": {}
+      }
+    }
+  }
+}
