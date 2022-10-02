@@ -13,6 +13,8 @@
 
 It is made to simplify making custom designs. It has in-built features which allow users to access beatiful designs assets from a single web application.
 
+🗞 Read more about it [here](https://keshraf.hashnode.dev/sigma-real-time-collaboration-design-tool)
+
 ![Preview With Background](https://user-images.githubusercontent.com/82109991/193294707-e6cf3234-dae3-4453-a388-d35e39eb1351.png)
 
 # Features
