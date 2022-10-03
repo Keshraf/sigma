@@ -270,7 +270,13 @@ const ItemResizer = ({ info, disable, updated }) => {
   return (
     <animated.div
       className={itemSelected ? styles.item : styles.unselectedItem}
-      style={{ x, y, width, height, cursor: `${disable ? "default" : "move"}` }}
+      style={{
+        x,
+        y,
+        width,
+        height,
+        cursor: `${disable ? "default" : "move"}`,
+      }}
       onClick={(e) => {
         dispatch(
           setSelectedElement({

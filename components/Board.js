@@ -29,26 +29,6 @@ import {
 } from "firebase/database";
 import { database } from "../firebaseConfig";
 
-// It used to easily listen to keyboard events
-function useKey(key, cb) {
-  const callbackRef = useRef(cb);
-
-  useEffect(() => {
-    callbackRef.current = cb;
-  });
-
-  useEffect(() => {
-    function handle(event) {
-      if (event.code === key) {
-        callbackRef.current(event);
-      }
-    }
-
-    document.addEventListener("keyup", handle);
-    return () => document.removeEventListener("keypress", handle);
-  }, [key]);
-}
-
 const Board = ({ page }) => {
   const board = useRef();
   const dispatch = useDispatch();
@@ -214,7 +194,9 @@ const Board = ({ page }) => {
   };
 
   const detectKeyDown = (e) => {
-    if (e.key !== "Delete") {
+    console.log(e.key);
+
+    if (e.key !== "Delete" && e.key !== "Backspace") {
       return;
     }
     // Returns if there no selected element
@@ -251,8 +233,6 @@ const Board = ({ page }) => {
     dispatch(resetSelected());
   };
 
-  useKey("Delete", detectKeyDown);
-
   return (
     <div
       className={styles.board}
@@ -263,18 +243,29 @@ const Board = ({ page }) => {
         backgroundColor: `${pageBackground[0]?.background}`,
       }}
       onClick={selectHandler}
-      onKeyDown={detectKeyDown}
       ref={board}
       id="board"
     >
       {pageElements.map((element) => {
         return (
-          <ItemResizer
-            info={element}
+          <button
+            onKeyUp={(e) => detectKeyDown(e)}
+            style={{
+              border: "none",
+              backgroundColor: "none",
+              color: "transparent",
+              height: "0",
+              width: "0",
+              padding: "0",
+            }}
             key={element.id}
-            disable={selected === element.id ? false : true}
-            updated={updated === element.id ? true : false}
-          />
+          >
+            <ItemResizer
+              info={element}
+              disable={selected === element.id ? false : true}
+              updated={updated === element.id ? true : false}
+            />
+          </button>
         );
       })}
     </div>
