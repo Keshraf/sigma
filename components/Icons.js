@@ -7,14 +7,19 @@ import * as FeatherIcons from "react-icons/fi";
 import { FaReact } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 
+// Other Libs
+import toast from "react-hot-toast";
+
 const Icons = ({ setIconsOpen, setName }) => {
   const icons = Object.keys(FeatherIcons);
   const values = Object.values(FeatherIcons);
 
   const addIconHandler = (e) => {
     // Gets the name of the icon that was passed to the attribute name while rendering the icon
+    toast.success("Icon selected!");
     const name = e.currentTarget.attributes.name.value;
     setName(name);
+    setIconsOpen(false);
   };
 
   return (
